@@ -33,12 +33,13 @@ describe('fnv-plus', function () {
      * Max allowable time in ms to hash 1kb of data with 32-bit fnv. Used to 
      * compute derivative benchmarks for other payload sizes and bitlengths.
      */
-    t = 5,
+    t = 2,
 
     performant = function (g, bitlen) {
-      var r = (generations[g] / generations[1]),
+      var a = 20, // overhead,
+        r = (generations[g] / generations[1]),
         x = Math.pow((bitlen / 32), 2) * t * Math.max(r, 1);
-      return x + 10;
+      return x + a;
     };
 
   // generate a bunch of ascii data
