@@ -1,6 +1,8 @@
 fnv-plus
 ========
 
+[![Build Status](https://travis-ci.org/tjwebb/fnv-plus.png?branch=master)](https://travis-ci.org/tjwebb/fnv-plus)
+
 Javascript FNV-1a Hashing Algorithm implemented up to 1024 bits
 
 #### 0. Concept
