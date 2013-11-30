@@ -1,0 +1,36 @@
+{
+  "name": "fnv-plus",
+  "version": "0.0.0",
+  "description": "Javascript FNV-1a hash algorithm implemented up to 1024 bit",
+  "main": "fnv.js",
+  "dependencies": {
+    "jsbn": "~0.0.0"
+  },
+  "devDependencies": {
+    "chai": "~1.8.1",
+    "mocha": "~1.14.0"
+  },
+  "scripts": {
+    "test": "mocha -R spec spec/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tjwebb/fnv-plus"
+  },
+  "keywords": [
+    "hash",
+    "checksum",
+    "fnv",
+    "fnv1a",
+    "signature",
+    "uniqueness",
+    "sig"
+  ],
+  "author": "Travis Webb",
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "gitHead": "227465ef7340e0087901ad50643266896fa96021",
+  "bugs": {
+    "url": "https://github.com/tjwebb/fnv-plus/issues"
+  }
+}

@@ -6,7 +6,8 @@
 var fnv = (function () {
   'use strict';
 
-  var default_bitlen = 32,
+  var BigInteger = require('jsbn'),
+    default_bitlen = 32,
     fnv_constants = {
       32: {
         prime: new BigInteger('0x01000193'),
@@ -39,10 +40,10 @@ var fnv = (function () {
       bitlength: bitlength,
       value: value,
       dec: function () {
-        return value.toString(10);
+        return value.toString();
       },
       hex: function () {
-        return value.toString(16);
+        return '0x' + value.toString(16);
       },
       base64: function () {
         return value.toString(64);
@@ -53,22 +54,37 @@ var fnv = (function () {
     };
   }
 
+  function shift (hash, bitlen) {
+    var hashlen = new BigInteger((hash.bitLength()).toString()),
+      rshift = bitlen.max(hashlen.subtract(bitlen));
+
+    return hash.shiftRight(rshift);
+  }
+
+  function hashGeneric (str, _bitlen) {
+    var bitlen = new BigInteger((_bitlen || default_bitlen).toString()),
+      prime = fnv_constants[bitlen].prime,
+      offset = fnv_constants[bitlen].offset,
+      hash = offset,
+      trunc = Math.pow(bitlen, 2);
+
+    for (var i = 0; i < str.length; ++i) {
+      hash = hash.xor(new BigInteger(str[i]));
+      hash = hash.multiply(prime);
+      if (hash.bitLength() >= trunc) {
+        hash = shift(hash, bitlen);
+      }
+    }
+    return new FnvHash(shift(hash, bitlen), bitlen);
+  }
+
   return {
 
     /**
      * @public
      */
     hash: function (str, _bitlen) {
-      var bitlen = _bitlen || default_bitlen,
-        prime = fnv_prime[bitlen],
-        offset = fnv_offset[bitlen],
-        hash = offset;
-        
-      for (var i = 0; i < str.length; ++i) {
-        hash = hash.xor(str.charCodeAt(i))
-                   .multiply(prime);
-      }
-      return new FnvHash(hash, bitlength);
+      return hashGeneric(str, _bitlen);
     }
   };
 })();
