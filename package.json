@@ -19,12 +19,14 @@
   },
   "keywords": [
     "hash",
+    "hashing",
     "checksum",
     "fnv",
     "fnv1a",
     "signature",
     "uniqueness",
-    "sig"
+    "sig",
+    "tuple space"
   ],
   "author": "Travis Webb",
   "license": "BSD",
