@@ -36,7 +36,7 @@ describe('fnv-plus', function () {
     t = 2,
 
     performant = function (g, bitlen) {
-      var a = 20, // overhead,
+      var a = 50, // overhead,
         r = (generations[g] / generations[1]),
         x = Math.pow((bitlen / 32), 2) * t * Math.max(r, 1);
       return x + a;
