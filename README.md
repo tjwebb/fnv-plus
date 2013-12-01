@@ -3,7 +3,7 @@ fnv-plus
 
 [![Build Status](https://travis-ci.org/tjwebb/fnv-plus.png?branch=master)](https://travis-ci.org/tjwebb/fnv-plus)
 
-Javascript FNV-1a Hashing Algorithm implemented up to 1024 bits
+Javascript FNV-1a Hashing Algorithm up to 1024 bits, with highly optimized 32bit and 52bit implementations.
 
 ### 0. Concept
 The FNV-1a hash algorithm, often simply called "fnv", disperses hashes
@@ -19,9 +19,10 @@ randomness; it is not designed to be secure.
 is capable of generating fnv hashes for keyspaces larger than 32 bits. 
 - `fnv-plus` is also very well-tested. Many other fnv implementations offer no unit
 tests to prove they work and are performant. 
-- Hash sizes up to 128bit are very fast compared to the ordinary 32bit
-implementation. Above that there is a noticeable performance decrease for
-large inputs, but is still fairly quick in practice for normal inputs.
+- `fnv-plus` implements a 52bit version of FNV-1a which provides a larger
+hash space while still highly optimized and performant. Bit lengths 64 and
+above incur a decrease in performance.
+
 
 ### 1. Usage
 

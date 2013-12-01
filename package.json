@@ -1,7 +1,7 @@
 {
   "name": "fnv-plus",
   "version": "1.1.0",
-  "description": "Javascript FNV-1a hash algorithm implemented up to 1024 bit",
+  "description": "Javascript FNV-1a Hashing Algorithm up to 1024 bits, with highly optimized 32bit and 52bit implementations.",
   "main": "fnv.js",
   "dependencies": {
     "jsbn": "~0.0.0"
