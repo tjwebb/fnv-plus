@@ -3,20 +3,24 @@
  * @author Travis Webb <me@traviswebb.com>
  * @see http://tools.ietf.org/html/draft-eastlake-fnv-06
  */
-var Fnv = function (seed) {
+var Fnv = (function () {
   'use strict';
 
   function bn (v, r) {
-    return new Bigbnnteger((v).toString(), r);
+    return new BigInteger((v).toString(), r);
   }
 
-  var Bigbnnteger = require('jsbn'),
+  var BigInteger = require('jsbn'),
     default_bitlen = 32,
     fnv_constants = {
       32: {
-        prime:  bn(2).pow(bn(24)).add(bn(2).pow(bn(8))).add(bn('93', 16)),
-        offset: bn('811C9DC5', 16),
-        mask:   bn('FFFFFFFF', 16)
+        prime:  Math.pow(2, 24) + Math.pow(2, 8) + 0x93,
+        offset: 0x811C9DC5,
+      },
+      52: {
+        prime:  parseInt(bn(2).pow(bn(40)).add(bn(2).pow(bn(8))).add(bn('b3', 16)), 10),
+        offset: parseInt(bn('CBF29CE484222325', 16).shiftRight(12), 10),
+        mask:   bn('FFFFFFFFFFFFF', 16)
       },
       64: {
         prime:  bn(2).pow(bn(40)).add(bn(2).pow(bn(8))).add(bn('b3', 16)),
@@ -73,37 +77,78 @@ var Fnv = function (seed) {
   }
 
   function hashGeneric (str, _bitlen) {
-    var bitlen = bn((_bitlen || default_bitlen).toString(), 10),
+    var bitlen = (_bitlen || default_bitlen),
       prime = fnv_constants[bitlen].prime,
-      offset = fnv_constants[bitlen].offset,
-      mask = fnv_constants[bitlen].mask,
-      hash = offset,
-      trunc = Math.pow(bitlen, 2);
+      hash = fnv_constants[bitlen].offset,
+      mask = fnv_constants[bitlen].mask;
 
     for (var i = 0; i < str.length; i++) {
-      hash = hash.xor(bn(str.charCodeAt(i).toString(), 10))
+      hash = hash.xor(bn(str.charCodeAt(i)))
                  .multiply(prime)
                  .and(mask);
     }
     return new FnvHash(hash, bitlen);
   }
 
-  return {
-    /**
-     * @public
-     * bnnitialize FNV with a non-default seed.
-     */
-    seed: function () {
+  /**
+   * Optimized 32bit-specific implementation. Executes about 5x faster in
+   * practice, due to reduced reliance on the BigInteger class and a more clever
+   * prime multiplication strategy.
+   */
+  function hash32 (str) {
+    var prime = fnv_constants[32].prime,
+      hash = fnv_constants[32].offset;
 
-    },
-
-    /**
-     * @public
-     */
-    hash: function (str, _bitlen) {
-      return hashGeneric(str, _bitlen);
+    for (var i = 0; i < str.length; i++) {
+      hash ^= str.charCodeAt(i);
+      hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
     }
-  };
-};
+    return new FnvHash(hash >>> 0, 32);
+  }
 
-module.exports = Fnv;
+  /**
+   * Optimized 52bit-specific implementation. Javascript integer space is 2^53,
+   * so this is the largest FNV hash space available that can take direct
+   * advantage of hardware integer ops.
+   */
+  function hash52 (str) {
+    var prime = fnv_constants[52].prime,
+      hash = fnv_constants[52].offset,
+      mask = fnv_constants[52].mask;
+
+    for (var i = 0; i < str.length; i++) {
+      hash ^= Math.pow(str.charCodeAt(i), 2);
+      hash *= prime;
+    }
+
+    return new FnvHash(bn(hash).and(mask), 52);
+  }
+
+  function constructor (seed) {
+    // TODO handle custom seed
+
+    return {
+      /**
+       * @public
+       */
+      hash: function (str, _bitlen) {
+        if ((_bitlen || default_bitlen) === 32) {
+          return hash32(str);
+        }
+        else if ((_bitlen || default_bitlen) === 52) {
+          return hash52(str);
+        }
+        else {
+          return hashGeneric(str, _bitlen);
+        }
+      }
+    };
+  }
+
+  return {
+    constructor: constructor
+  };
+
+})();
+
+module.exports = Fnv.constructor;

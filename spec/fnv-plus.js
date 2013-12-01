@@ -4,6 +4,16 @@ var Fnv = require('../fnv-plus'),
 
 describe('fnv-plus', function () {
   describe('Fnv', function () {
+    describe('sanity', function () {
+      it('should make public api functions available', function () {
+        assert.ok(Fnv);
+
+        var fnv = new Fnv();
+        assert.ok(fnv);
+        assert.isFunction(fnv.hash);
+      });
+    });
+
     var hash1 = 'hello world',
       hash2 = 'the quick brown fox jumps over the lazy dog';
 
@@ -32,7 +42,7 @@ describe('fnv-plus', function () {
           K = 1024,
           M = K * K,
         generate = function () {
-          return {
+          return JSON.stringify({
             foo: 'bar',
             hello: {
               bar: 'world',
@@ -47,9 +57,9 @@ describe('fnv-plus', function () {
             },
             text: 'the quick '+ (Math.random() * 10).toString(36) + 'brown fox',
             moretext: 'lorem ipsum total random junk 23i2jnlkwjbflksdbf'
-          };
+          });
         },
-        generations = [ 1, 1*K, 2*K, 4*K, 8*K, 16*K, 32*K, 128*K, 1*M ],
+        generations = [ 1, 1*K, 2*K, 4*K, 8*K, 16*K, 32*K, 128*K ],
         gentime,
         ascii = { },
 
@@ -110,6 +120,32 @@ describe('fnv-plus', function () {
             max = performant(g, 32);
 
             //console.log('32bit actual: '+ actual);
+
+            assert(actual < max, 'actual time in ms: '+ actual +' ; max allowed: '+ max);
+          }
+        });
+      });
+      describe('52bit', function () {
+        it('should generate a 52-bit hash if specified', function () {
+          var h1 = fnv.hash(hash1, 52),
+              h2 = fnv.hash(hash2, 52),
+              h3 = fnv.hash(generate(), 52);
+
+          assert.equal(h1.hex(), '70ffb912e6880');
+          assert.equal(h2.hex(), '2f97488568c55');
+          assert.ok(h3.hex());
+          assert.equal(h3.hex().length, 13);
+        });
+        it('should be performant (52)', function () {
+          for (var g = 0; g < generations.length; g++) {
+            var t1 = new Date().valueOf(),
+              t2, max;
+            fnv.hash(ascii[g], 52);
+            t2 = new Date().valueOf();
+            actual = t2 - t1;
+            max = performant(g, 52);
+
+            //console.log('52bit actual: '+ actual);
 
             assert(actual < max, 'actual time in ms: '+ actual +' ; max allowed: '+ max);
           }
@@ -250,7 +286,6 @@ describe('fnv-plus', function () {
       });
     });
     describe('FnvHash', function () {
-
       var h1, h2, fnv;
 
       before(function () {
