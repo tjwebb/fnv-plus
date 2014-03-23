@@ -1,323 +1,415 @@
 /* jshint expr:true */
-var Fnv = require('../fnv-plus'),
+var fnv = require('../fnv-plus'),
   assert = require('chai').assert;
 
 describe('fnv-plus', function () {
-  describe('Fnv', function () {
-    describe('sanity', function () {
-      it('should make public api functions available', function () {
-        assert.ok(Fnv);
-
-        var fnv = new Fnv();
-        assert.ok(fnv);
-        assert.isFunction(fnv.hash);
-      });
+  describe('sanity', function () {
+    it('should make public api functions available', function () {
+      assert.ok(fnv);
+      assert.isFunction(fnv.hash);
     });
+  });
 
-    var hash1 = 'hello world',
-      hash2 = 'the quick brown fox jumps over the lazy dog';
+  var hash1 = 'hello world',
+    hash2 = 'the quick brown fox jumps over the lazy dog';
 
-    describe('#constructor', function () {
+  describe('#hash', function () {
+    var K = 1024,
+        M = K * K,
+      generate = function () {
+        return JSON.stringify({
+          foo: 'bar',
+          hello: {
+            bar: 'world',
+            baz: [1,2,3,4],
+            random: Math.random() * 100000
+          },
+          '0x123': {
+            makes: 'no sense !@#$%^&*()_+'
+          },
+          alice: function () {
+            return 'bob';
+          },
+          text: 'the quick '+ (Math.random() * 10).toString(36) + 'brown fox',
+          moretext: 'lorem ipsum total random junk 23i2jnlkwjbflksdbf'
+        });
+      },
+      generations = [ 1, 1*K, 2*K, 4*K, 8*K, 16*K, 32*K, 128*K ],
+      gentime,
+      ascii = { },
 
       /**
-       * Should initialize in < 1ms with default seed
-       */
-      it('should initialize in < 1ms with default seed', function () {
-        var t1 = new Date().valueOf(), t2;
-        for (var i = 0; i < 100; i++) {
-          new Fnv();
-        }
-        t2 = new Date().valueOf();
-        assert((t2 - t1) < 100, 'Fnv constructor is too slow');
-      });
+      * Max allowable time in ms to hash 1kb of data with 32-bit fnv. Used to 
+      * compute derivative benchmarks for other payload sizes and bitlengths.
+      */
+      t = 2,
 
-      it.skip('produce stable hashes with custom seed', function () {
+      performant = function (g, bitlen) {
+        var a = 50, // overhead,
+          r = (generations[g] / generations[1]),
+          x = Math.pow((bitlen / 32), 2) * t * Math.max(r, 1);
+        return x + a;
+      };
 
-      });
-
-    });
-
-    describe('#hash()', function () {
-      var fnv = new Fnv(),
-          K = 1024,
-          M = K * K,
-        generate = function () {
-          return JSON.stringify({
-            foo: 'bar',
-            hello: {
-              bar: 'world',
-              baz: [1,2,3,4],
-              random: Math.random() * 100000
-            },
-            '0x123': {
-              makes: 'no sense !@#$%^&*()_+'
-            },
-            alice: function () {
-              return 'bob';
-            },
-            text: 'the quick '+ (Math.random() * 10).toString(36) + 'brown fox',
-            moretext: 'lorem ipsum total random junk 23i2jnlkwjbflksdbf'
-          });
-        },
-        generations = [ 1, 1*K, 2*K, 4*K, 8*K, 16*K, 32*K, 128*K ],
-        gentime,
-        ascii = { },
-
-        /**
-        * Max allowable time in ms to hash 1kb of data with 32-bit fnv. Used to 
-        * compute derivative benchmarks for other payload sizes and bitlengths.
-        */
-        t = 2,
-
-        performant = function (g, bitlen) {
-          var a = 50, // overhead,
-            r = (generations[g] / generations[1]),
-            x = Math.pow((bitlen / 32), 2) * t * Math.max(r, 1);
-          return x + a;
-        };
-
-      // generate a bunch of ascii data
-      before(function () {
-        var data = { },
-          t1 = new Date().valueOf();
-
-        for (var g = 0; g < generations.length; g++) {
-          data[g] || (data[g] = [ ]);
-          ascii[g] = '';
-
-          while (ascii[g].length <= generations[g]) {
-            data[g].push(generate());
-            ascii[g] += JSON.stringify(data[g]);
-          }
-          ascii[g].slice(0, generations[g] - 1);
-          assert(ascii[g].length >= generations[g], 'test data of insufficient size');
-        }
-        gentime = new Date().valueOf() - t1;
-      });
+    // generate a bunch of ascii data
+    before(function () {
+      var data = { },
+        t1 = new Date().valueOf();
 
       for (var g = 0; g < generations.length; g++) {
-        it('generated '+ (generations[g] / K).toFixed(0) +'k of test data');
+        data[g] || (data[g] = [ ]);
+        ascii[g] = '';
+
+        while (ascii[g].length <= generations[g]) {
+          data[g].push(generate());
+          ascii[g] += JSON.stringify(data[g]);
+        }
+        ascii[g].slice(0, generations[g] - 1);
+        assert(ascii[g].length >= generations[g], 'test data of insufficient size');
       }
+      gentime = new Date().valueOf() - t1;
+    });
 
-      describe('32bit', function () {
-        it('should generate a 32-bit hash by default', function () {
-          var h1 = fnv.hash(hash1),
-              h2 = fnv.hash(hash2),
-              h3 = fnv.hash(generate());
+    for (var g = 0; g < generations.length; g++) {
+      it('generated '+ (generations[g] / K).toFixed(0) +'k of test data');
+    }
 
-          assert.equal(h1.hex(), 'd58b3fa7');
-          assert.equal(h2.hex(), 'ef693ff0');
-          assert.ok(h3.hex());
-          assert.equal(h3.hex().length, 8);
-        });
-        it('should be performant (32)', function () {
-          for (var g = 0; g < generations.length; g++) {
-            var t1 = new Date().valueOf(),
-              t2, max;
-            fnv.hash(ascii[g]);
-            t2 = new Date().valueOf();
-            actual = t2 - t1;
-            max = performant(g, 32);
-
-            //console.log('32bit actual: '+ actual);
-
-            assert(actual < max, 'actual time in ms: '+ actual +' ; max allowed: '+ max);
-          }
-        });
+    describe('()', function () {
+      beforeEach(function() {
+        fnv.seed();
       });
-      describe('52bit', function () {
-        it('should generate a 52-bit hash if specified', function () {
-          var h1 = fnv.hash(hash1, 52),
-              h2 = fnv.hash(hash2, 52),
-              h3 = fnv.hash(generate(), 52);
+      it('should generate a 52-bit hash by default', function () {
+        var h1 = fnv.hash(hash1),
+            h2 = fnv.hash(hash2),
+            h3 = fnv.hash(generate());
 
-          assert.equal(h1.hex(), '70ffb912e6880');
-          assert.equal(h2.hex(), '2f97488568c55');
-          assert.ok(h3.hex());
-          assert.equal(h3.hex().length, 13);
-        });
-        it('should be performant (52)', function () {
-          for (var g = 0; g < generations.length; g++) {
-            var t1 = new Date().valueOf(),
-              t2, max;
-            fnv.hash(ascii[g], 52);
-            t2 = new Date().valueOf();
-            actual = t2 - t1;
-            max = performant(g, 52);
-
-            //console.log('52bit actual: '+ actual);
-
-            assert(actual < max, 'actual time in ms: '+ actual +' ; max allowed: '+ max);
-          }
-        });
+        assert.equal(h1.hex(), '70fdcd2665b80');
+        assert.equal(h2.hex(), '97153c7d081a0');
+        assert.ok(h3.hex());
+        assert.equal(h3.hex().length, 13);
       });
-      describe('64bit', function () {
-        it('should generate a 64-bit hash if specified', function () {
-          var h1 = fnv.hash(hash1, 64),
-              h2 = fnv.hash(hash2, 64),
-              h3 = fnv.hash(generate(), 64);
+      it('should generate a distinct hash when using a custom seed', function () {
+        fnv.seed('custom seed fnvplus 1234 foobar');
+        var h1 = fnv.hash(hash1),
+            h2 = fnv.hash(hash2),
+            h3 = fnv.hash(generate());
 
-          assert.equal(h1.hex(), '779a65e7023cd2e7');
-          assert.equal(h2.hex(), '7404cea13ff89bb0');
-          assert.ok(h3.hex());
-          assert.equal(h3.hex().length, 16);
-        });
-        it('should be performant (64)', function () {
-          for (var g = 0; g < generations.length; g++) {
-            var t1 = new Date().valueOf(),
-              t2, max;
-            fnv.hash(ascii[g], 64);
-            t2 = new Date().valueOf();
-            actual = t2 - t1;
-            max = performant(g, 64);
-
-            //console.log('64bit actual: '+ actual);
-
-            assert(actual < max, 'actual time in ms: '+ actual +' ; max allowed: '+ max);
-          }
-        });
+        assert.equal(h1.hex(), 'e7879cd771f43');
+        assert.equal(h2.hex(), '970bd9caf8740');
+        assert.ok(h3.hex());
+        assert.equal(h3.hex().length, 13);
       });
-      describe('128bit', function () {
-        it('should generate a 128-bit hash if specified', function () {
-          var h1 = fnv.hash(hash1, 128), 
-              h2 = fnv.hash(hash2, 128),
-              h3 = fnv.hash(generate(), 128);
+      it('should generate a distict hashes for objects', function () {
+        var h1 = fnv.hash(hash1),
+            h2 = fnv.hash(hash2),
+            h3 = fnv.hash(generate());
 
-          assert.equal(h1.hex(), '6c155799fdc8eec4b91523808e7726b7');
-          assert.equal(h2.hex(), '577ea59947cc87c26ffa73dd35a3f550');
-          assert.ok(h3.hex());
-          assert.equal(h3.hex().length, 32);
-        });
-        it('should be performant (128)', function () {
-          for (var g = 0; g < generations.length; g++) {
-            var t1 = new Date().valueOf(),
-              t2, max;
-            fnv.hash(ascii[g], 128);
-            t2 = new Date().valueOf();
-            actual = t2 - t1;
-            max = performant(g, 128);
-
-            //console.log('128bit actual: '+ actual);
-
-            assert(actual < max, 'actual time in ms: '+ actual +' ; max allowed: '+ max);
-          }
-        });
+        assert.equal(h1.hex(), 'e7879cd771f43');
+        assert.equal(h2.hex(), '970bd9caf8740');
+        assert.ok(h3.hex());
+        assert.equal(h3.hex().length, 13);
       });
-      describe('256bit', function () {
-        it('should generate a 256-bit hash if specified', function () {
-          var h1 = fnv.hash(hash1, 256),
-              h2 = fnv.hash(hash2, 256),
-              h3 = fnv.hash(generate(), 256);
+      it('should be performant (52)', function () {
+        for (var g = 0; g < generations.length; g++) {
+          var t1 = new Date().valueOf(),
+            t2, max;
 
-          assert.equal(h1.hex(), 'ecc3cf2e0edfccd3d87f21ec0883aad4db43eead66ce09eb4a97e04e1a184527');
-          assert.equal(h2.hex(), '19395122fd2327ae0ddc5e67d8c001f4b93c6e35d422c6c62813d6cf60a77dd0');
-          assert.ok(h3.hex());
-          assert.equal(h3.hex().length, 64);
-        });
-        it('should be performant (256)', function () {
-          for (var g = 0; g < generations.length; g++) {
-            var t1 = new Date().valueOf(),
-              t2, max;
-            fnv.hash(ascii[g], 256);
-            t2 = new Date().valueOf();
-            actual = t2 - t1;
-            max = performant(g, 256);
+          fnv.hash(ascii[g], 52);
+          t2 = new Date().valueOf();
+          actual = t2 - t1;
+          max = performant(g, 52);
 
-            //console.log('256bit actual: '+ actual);
+          //console.log('52bit actual: '+ actual);
 
-            assert(actual < max, 'actual time in ms: '+ actual +' ; max allowed: '+ max);
-          }
-        });
-      });
-      describe('512bit', function () {
-        it('should generate a 512-bit hash if specified', function () {
-          var h1 = fnv.hash(hash1, 512),
-              h2 = fnv.hash(hash2, 512),
-              h3 = fnv.hash(generate(), 512);
-
-          assert.equal(h1.hex(), '2b9c19ec56ccf98da0f227cc82bfaacbd8350928bd2ceacae7bc8aa13e747f5c43ca4e2e98fc25e94e4e805675545ee95a3b968c0acfaecb90aea2fdbcd4de0f');
-          assert.equal(h2.hex(), '881463aa6428ced46b62d3702311d326af7dcff79deb64d3f0a1a7eec2957f6718f2ade6cf47d266433f38e535a9760ef62c7c27184809d83b0f2b2a8d9d69d8');
-          assert.ok(h3.hex());
-          assert.equal(h3.hex().length, 128);
-        });
-        it('should be performant (512)', function () {
-          for (var g = 0; g < generations.length; g++) {
-            var t1 = new Date().valueOf(),
-              t2, max;
-            fnv.hash(ascii[g], 512);
-            t2 = new Date().valueOf();
-            actual = t2 - t1;
-            max = performant(g, 512);
-
-            //console.log('512bit actual: '+ actual);
-
-            assert(actual < max, 'actual time in ms: '+ actual +' ; max allowed: '+ max);
-          }
-        });
-      });
-      describe('1024bit', function () {
-        it('should generate a 1024-bit hash if specified', function () {
-          var h1 = fnv.hash(hash1, 1024),
-              h2 = fnv.hash(hash2, 1024),
-              h3 = fnv.hash(generate(), 1024);
-
-          assert.equal(h1.hex(), '3fa9d253e52ae80105b382c80a01e27a53d7bc1d201efb47b38f4d6e465489829d7d272127d20e1076129c00000000000000000000000000000000000000000000000000000000000000000000000000000253eb20f42a7228af9022d9f35ece5bb71e40fcd8717b80d164ab921709996e5c43aae801418e878cddf968d4616f');
-          assert.equal(h2.hex(), '3a13c61b1e04c267aa85cf164e8c9d7c5b2ab14e34c846455bc878e818913e603d5c5a3183a7a82129d420000000002c78c4ffbd2756340f2832a6ab43a50f84596efc9c7ce1ea25ed87cfae6f961834673b91c1f6cf8ee52e689d7188f061f5ac75c344e122b851daa50168b1b854ded8e8ed3bb94747c596e9a13b28ee2220');
-          assert.ok(h3.hex());
-
-          assert.equal(h1.hex().length, 256);
-          assert.equal(h2.hex().length, 256);
-          assert.equal(h3.hex().length, 256);
-        });
-        it('should be performant (1024)', function () {
-          for (var g = 0; g < generations.length; g++) {
-            var t1 = new Date().valueOf(),
-              t2, max;
-            fnv.hash(ascii[g], 1024);
-            t2 = new Date().valueOf();
-            actual = t2 - t1;
-            max = performant(g, 1024);
-
-            //console.log('1024 actual: '+ actual);
-
-            assert(actual < max, 'actual time in ms: '+ actual +' ; max allowed: '+ max);
-          }
-        });
+          assert(actual < max, 'actual time in ms: '+ actual +' ; max allowed: '+ max);
+        }
       });
     });
-    describe('FnvHash', function () {
-      var h1, h2, fnv;
 
-      before(function () {
-        fnv = new Fnv(),
-        h1 = fnv.hash(hash1),
-        h2 = fnv.hash(hash2);
-        h3 = fnv.hash(hash1, 64),
-        h4 = fnv.hash(hash2, 64);
+    describe('(32)', function () {
+      beforeEach(function () {
+        fnv.seed();
       });
+      it('should generate a 32-bit hash if specified', function () {
+        var h1 = fnv.hash(hash1, 32),
+            h2 = fnv.hash(hash2, 32),
+            h3 = fnv.hash(generate(), 32);
 
-      it('#str()', function () {
-        var h1 = fnv.hash(hash1);
-        assert.equal(h1.str(), '1n91413');
-        assert.equal(h2.str(), '1ufesq8');
-
-        assert.equal(h3.str(), '1th7cxzlyc0dj');
-        assert.equal(h4.str(), '1rik8q0d89h9s');
+        assert.equal(h1.hex(), 'f4b1d0d6');
+        assert.equal(h2.hex(), 'c28fc5b1');
+        assert.ok(h3.hex());
+        assert.equal(h3.hex().length, 8);
       });
-      it('#hex()', function () {
-        assert.equal(h1.hex(), 'd58b3fa7');
-        assert.equal(h2.hex(), 'ef693ff0');
+      it('should generate a distinct hash when using a custom seed', function () {
+        fnv.seed('custom seed fnvplus 0001 foobar');
+        var h1 = fnv.hash(hash1, 32),
+            h2 = fnv.hash(hash2, 32),
+            h3 = fnv.hash(generate(), 32);
 
-        assert.equal(h3.hex(), '779a65e7023cd2e7');
-        assert.equal(h4.hex(), '7404cea13ff89bb0');
+        assert.equal(h1.hex(), '3be94b72');
+        assert.equal(h2.hex(), '161a0105');
+        assert.ok(h3.hex());
+        assert.equal(h3.hex().length, 8);
       });
-      it('#dec()', function () {
-        assert.equal(h1.dec(), '3582672807');
-        assert.equal(h2.dec(), '4016652272');
+      it('should be performant', function () {
+        for (var g = 0; g < generations.length; g++) {
+          var t1 = new Date().valueOf(),
+            t2, max;
 
-        assert.equal(h3.dec(), '8618312879776256743');
-        assert.equal(h4.dec(), '8360034000264797104');
+          fnv.hash(ascii[g]);
+          t2 = new Date().valueOf();
+          actual = t2 - t1;
+          max = performant(g, 32);
+
+          assert(actual < max, 'actual time in ms: '+ actual +' ; max allowed: '+ max);
+        }
       });
+    });
+
+    describe('(64)', function () {
+      beforeEach(function () {
+        fnv.seed();
+      });
+      it('should generate a 64-bit hash if specified', function () {
+        var h1 = fnv.hash(hash1, 64),
+            h2 = fnv.hash(hash2, 64),
+            h3 = fnv.hash(generate(), 64);
+
+        assert.equal(h1.hex(), '20aa410bc777a796');
+        assert.equal(h2.hex(), '46cc6e1a37123ff1');
+        assert.ok(h3.hex());
+        assert.equal(h3.hex().length, 16);
+      });
+      it('should generate a distinct hash when using a custom seed', function () {
+        fnv.seed('custom seed fnvplus 5678 foobar');
+        var h1 = fnv.hash(hash1, 64),
+            h2 = fnv.hash(hash2, 64),
+            h3 = fnv.hash(generate(), 64);
+
+        assert.equal(h1.hex(), '9f00040c255e9c85');
+        assert.equal(h2.hex(), 'cb82f5943330d922');
+        assert.ok(h3.hex());
+        assert.equal(h3.hex().length, 16);
+      });
+      it('should be performant (64)', function () {
+        for (var g = 0; g < generations.length; g++) {
+          var t1 = new Date().valueOf(),
+            t2, max;
+
+          fnv.hash(ascii[g], 64);
+          t2 = new Date().valueOf();
+          actual = t2 - t1;
+          max = performant(g, 64);
+
+          //console.log('64bit actual: '+ actual);
+
+          assert(actual < max, 'actual time in ms: '+ actual +' ; max allowed: '+ max);
+        }
+      });
+    });
+
+    describe('(128)', function () {
+      beforeEach(function() {
+        fnv.seed();
+      });
+      it('should generate a 128-bit hash', function () {
+        var h1 = fnv.hash(hash1, 128), 
+            h2 = fnv.hash(hash2, 128),
+            h3 = fnv.hash(generate(), 128);
+
+        assert.equal(h1.hex(), '354cf5c68f2e7717c7f1b1125cd4bc26');
+        assert.equal(h2.hex(), 'f7b16111d098493afbccf971f25388a1');
+        assert.ok(h3.hex());
+        assert.equal(h3.hex().length, 32);
+      });
+      it('should generate a distinct hash when using a custom seed', function () {
+        fnv.seed('custom seed fnvplus 4208 tjwebb');
+        var h1 = fnv.hash(hash1, 128),
+            h2 = fnv.hash(hash2, 128),
+            h3 = fnv.hash(generate(), 128);
+
+        assert.equal(h1.hex(), '9828b44e3c8c859b84d682d46ade2c56');
+        assert.equal(h2.hex(), 'd1641ee5f8e3e9177a82c28d79844ed1');
+        assert.ok(h3.hex());
+        assert.equal(h3.hex().length, 32);
+      });
+      it('should be performant (128)', function () {
+        for (var g = 0; g < generations.length; g++) {
+          var t1 = new Date().valueOf(),
+            t2, max;
+
+          fnv.hash(ascii[g], 128);
+          t2 = new Date().valueOf();
+          actual = t2 - t1;
+          max = performant(g, 128);
+
+          //console.log('128bit actual: '+ actual);
+
+          assert(actual < max, 'actual time in ms: '+ actual +' ; max allowed: '+ max);
+        }
+      });
+    });
+    describe('(256)', function () {
+      beforeEach(function() {
+        fnv.seed();
+      });
+      it('should generate a 256-bit hash', function () {
+        var h1 = fnv.hash(hash1, 256),
+            h2 = fnv.hash(hash2, 256),
+            h3 = fnv.hash(generate(), 256);
+
+        assert.equal(h1.hex(), 'b871cdb1531c52cf7ff715bb6049a127630376ddce36a5639a6cfa6629dc2556');
+        assert.equal(h2.hex(), 'f21986b06f30d84b3e980b3ba5929869a3f9238c34635cb64411b56f504a72b1');
+        assert.ok(h3.hex());
+        assert.equal(h3.hex().length, 64);
+      });
+      it('should generate a distinct hash when using a custom seed', function () {
+        fnv.seed('custom seed fnvplus 5678 alicebob');
+        var h1 = fnv.hash(hash1, 256),
+            h2 = fnv.hash(hash2, 256),
+            h3 = fnv.hash(generate(), 256);
+
+        assert.equal(h1.hex(), '88975b19f3be6589d96f9ca5de32a038ac579e550ccdddc8863d7914909ea48b');
+        assert.equal(h2.hex(), 'adadc3d09ca3484d51629cc288d9ef06a10751c55e200c32039f18ff1ec9a2fc');
+        assert.ok(h3.hex());
+        assert.equal(h3.hex().length, 64);
+      });
+      it('should be performant', function () {
+        for (var g = 0; g < generations.length; g++) {
+          var t1 = new Date().valueOf(),
+            t2, max;
+
+          fnv.hash(ascii[g], 256);
+          t2 = new Date().valueOf();
+          actual = t2 - t1;
+          max = performant(g, 256);
+
+          //console.log('256bit actual: '+ actual);
+
+          assert(actual < max, 'actual time in ms: '+ actual +' ; max allowed: '+ max);
+        }
+      });
+    });
+    describe('(512)', function () {
+      beforeEach(function() {
+        fnv.seed();
+      });
+      it('should generate a 512-bit hash if specified', function () {
+        var h1 = fnv.hash(hash1, 512),
+            h2 = fnv.hash(hash2, 512),
+            h3 = fnv.hash(generate(), 512);
+
+        assert.equal(h1.hex(), '40062fa080039ae19def139eb6b75aaeea84b7e7e12f908cdc7a28fa7eebd33192f266862ff8e5ac8240f50d7b1f6506f14b2401a7c4ede17c1f1eebf76b2096');
+        assert.equal(h2.hex(), '775268ebea84417415a4b75d2936f67fce5db06ad5f9181bcf2321e2c8ccb97072bfef637fb5c121acb8fa2e10e1a858af5b54cf82e656149b786b54cf08be71');
+        assert.ok(h3.hex());
+        assert.equal(h3.hex().length, 128);
+      });
+      it('should generate a distinct hash when using a custom seed', function () {
+        fnv.seed('custom seed fnvplus 5432 barfoo');
+        var h1 = fnv.hash(hash1, 512),
+            h2 = fnv.hash(hash2, 512),
+            h3 = fnv.hash(generate(), 512);
+
+        assert.equal(h1.hex(), 'bb89a616218c49a2d743126a992d7cbe12996e3d3a8a6f6a9c739bcdd964bf00b44fb3ff6258e1acacbd6cd47194c910b6bdddb4514b7a00e18a30fec97b4323');
+        assert.equal(h2.hex(), 'eb58c9b70c219569b2e68b8b2559a869551ae510eafbbfe8170616548324246321d3dd330707f58623f7b1babcaacd41d7d68fe38d8fdce546f20c33d58e2824');
+        assert.ok(h3.hex());
+        assert.equal(h3.hex().length, 128);
+      });
+      it('should be performant', function () {
+        for (var g = 0; g < generations.length; g++) {
+          var t1 = new Date().valueOf(),
+            t2, max;
+
+          fnv.hash(ascii[g], 512);
+          t2 = new Date().valueOf();
+          actual = t2 - t1;
+          max = performant(g, 512);
+
+          //console.log('512bit actual: '+ actual);
+
+          assert(actual < max, 'actual time in ms: '+ actual +' ; max allowed: '+ max);
+        }
+      });
+    });
+    describe('1024bit', function () {
+      beforeEach(function() {
+        fnv.seed();
+      });
+      it('should generate a 1024-bit hash if specified', function () {
+        var h1 = fnv.hash(hash1, 1024),
+            h2 = fnv.hash(hash2, 1024),
+            h3 = fnv.hash(generate(), 1024);
+
+        assert.equal(h1.hex(), '4ef71a2b641f5bfd4b1861209eb33f1a26e725cd148e8f1de12c6b6e4713856aba111a215e87b5931339c000000000000000000000000000000000000000000000000000000000000000000000000917e68e5a6fc89c0014ac05563f653c65d3260f7bee0c4b8ae34aad713924060445e233686cb4337767592a465724557a8e');
+        assert.equal(h2.hex(), '69b6977eda2db3a7b528664ee8c37833eec66cc3ee66a066482bc3e780561ffff8c9cc933a987d593607c400adb98da6adc997a8fc82f25809e641d409934a9d3c16a834d0201e090678c6df5daa245b583fb58fb35069014c83b67b76290f5fc8996506777ffcb2075fbd6052d5f18ccf3972f3bfa22bd62a30fe0a9d4be4c1');
+        assert.ok(h3.hex());
+
+        assert.equal(h1.hex().length, 256);
+        assert.equal(h2.hex().length, 256);
+        assert.equal(h3.hex().length, 256);
+      });
+      it('should generate a distinct hash when using a custom seed', function () {
+        fnv.seed('custom seed fnvplus 8080 lalala');
+        var h1 = fnv.hash(hash1, 1024),
+            h2 = fnv.hash(hash2, 1024),
+            h3 = fnv.hash(generate(), 1024);
+
+        assert.equal(h1.hex(), 'aece2c9e28355cbc122c700cae0928fd018b6a153b8465b8f4311d6dad8f4ed7912c14e6ad2b88f69d544700000000000000000000000000000000000000000000000000000000000000000000000000000253f62d071d9a6183c3925bc1cf076e55dc2ee4af48a6f6328ad5710674bd94b7b150d61eab89037e1a4b308d4699');
+        assert.equal(h2.hex(), '1c137db6a73f8d408b5157885958c4f0227cf847e0de970ca1a7e1b3becb9c2a3dfeb5d59e4e81fa3a8763000000002c79980ce49cfae9928bd8c49818d965611b5b171c39bc4949765fab944eca30898ee0bcbd793751f4cc8f11c0f3b2902e370c51aec864d9631facccc7637a1233f7b18a3c84cf49c9191768d1b4028956');
+        assert.ok(h3.hex());
+        assert.equal(h3.hex().length, 256);
+      });
+      it('should be performant (1024)', function () {
+        for (var g = 0; g < generations.length; g++) {
+          var t1 = new Date().valueOf(),
+            t2, max;
+
+          fnv.hash(ascii[g], 1024);
+          t2 = new Date().valueOf();
+          actual = t2 - t1;
+          max = performant(g, 1024);
+
+          //console.log('1024 actual: '+ actual);
+
+          assert(actual < max, 'actual time in ms: '+ actual +' ; max allowed: '+ max);
+        }
+      });
+    });
+  });
+  describe('FnvHash', function () {
+    var h1, h2;
+    beforeEach(function() {
+      fnv.seed();
+    });
+
+    before(function () {
+      h1 = fnv.hash(hash1),
+      h2 = fnv.hash(hash2);
+      h3 = fnv.hash(hash1, 64),
+      h4 = fnv.hash(hash2, 64);
+    });
+
+    it('#str()', function () {
+      var h1 = fnv.hash(hash1);
+      assert.equal(h1.str(), 'jklr2akuww');
+      assert.equal(h2.str(), 'q650yhjd0g');
+
+      assert.equal(h3.str(), 'hvs45jc5k7fa');
+      assert.equal(h4.str(), '12rc4w0lr3yep');
+    });
+    it('#hex()', function () {
+      assert.equal(h1.hex(), '70fdcd2665b80');
+      assert.equal(h2.hex(), '97153c7d081a0');
+
+      assert.equal(h3.hex(), '20aa410bc777a796');
+      assert.equal(h4.hex(), '46cc6e1a37123ff1');
+    });
+    it('#dec()', function () {
+      assert.equal(h1.dec(), '1987765934119808');
+      assert.equal(h2.dec(), '2657879438950816');
+
+      assert.equal(h3.dec(), '2353765274101458838');
+      assert.equal(h4.dec(), '5101573536776077297');
     });
   });
 });
