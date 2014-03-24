@@ -22,14 +22,14 @@ tests to prove they work and are performant.
 - `fnv-plus` implements a 52bit version of FNV-1a which provides a larger
 hash space while still highly optimized and performant. Bit lengths 64 and
 above incur a decrease in performance.
-
+- Additionally, you can easily define custom seeds. Most other fnv
+implementations hardcode the fnv offset.
 
 ### 1. Usage
 
-    var Fnv = require('fnv-plus'),
-      fnv = new Fnv(),                    // create new fnv instance
+    var fnv = require('fnv-plus'),
       astring = 'hello world',
-      ahash32 = fnv.hash(astring);        // 32-bit hash by default
+      ahash32 = fnv.hash(astring),        // 32-bit hash by default
       ahash64 = fnv.hash(astring, 64);    // 64-bit hash specified
 
     assert.equal(ahash32.hex(), '0xb23eba32');
@@ -39,6 +39,9 @@ above incur a decrease in performance.
     assert.equal(ahash64.hex(), '0xa8dd8fbdc2b13ffc');
     assert.equal(ahash64.str(), '2kg3e4gji835o');
     assert.equal(ahash64.dec(), '12168039813402935292');
+
+    fnv.seed('this can be anything');
+    assert.notEqual(fnv.hash(astring), ahash64);
 
 ### 2. API
 
