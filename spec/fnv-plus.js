@@ -11,7 +11,24 @@ describe('fnv-plus', function () {
   });
 
   var hash1 = 'hello world',
-    hash2 = 'the quick brown fox jumps over the lazy dog';
+    hash2 = 'the quick brown fox jumps over the lazy dog',
+    hashObject1 = { a: 1, foo: 'bar', test: 'yes' },
+    hashObject2 = {
+      id: 1,
+      cid: 'c82',
+      changed: { },
+      attributes: {
+        name: 'tjwebb',
+        password: 'passwordlol',
+        posts: 273,
+        favoriteBooks: [
+          'the social animal',
+          'infinite jest',
+          'nineteen eighty-four',
+          'the 7 habits of highly effective people'
+        ]
+      }
+    };
 
   describe('#hash', function () {
     var K = 1024,
@@ -99,15 +116,12 @@ describe('fnv-plus', function () {
         assert.ok(h3.hex());
         assert.equal(h3.hex().length, 13);
       });
-      it('should generate a distict hashes for objects', function () {
-        var h1 = fnv.hash(hash1),
-            h2 = fnv.hash(hash2),
-            h3 = fnv.hash(generate());
+      it('should generate distinct hashes for objects', function () {
+        var h1 = fnv.hash(hashObject1),
+          h2 = fnv.hash(hashObject2);
 
-        assert.equal(h1.hex(), 'e7879cd771f43');
-        assert.equal(h2.hex(), '970bd9caf8740');
-        assert.ok(h3.hex());
-        assert.equal(h3.hex().length, 13);
+        assert.equal(h1.hex(), 'f548fd1135663');
+        assert.equal(h2.hex(), '287c3f4348a8b');
       });
       it('should be performant (52)', function () {
         for (var g = 0; g < generations.length; g++) {
@@ -150,6 +164,13 @@ describe('fnv-plus', function () {
         assert.equal(h2.hex(), '161a0105');
         assert.ok(h3.hex());
         assert.equal(h3.hex().length, 8);
+      });
+      it('should generate distinct hashes for objects', function () {
+        var h1 = fnv.hash(hashObject1, 32),
+          h2 = fnv.hash(hashObject2, 32);
+
+        assert.equal(h1.hex(), '7416acb6');
+        assert.equal(h2.hex(), 'f13b4e99');
       });
       it('should be performant', function () {
         for (var g = 0; g < generations.length; g++) {
@@ -331,7 +352,7 @@ describe('fnv-plus', function () {
         }
       });
     });
-    describe('1024bit', function () {
+    describe('(1024)', function () {
       beforeEach(function() {
         fnv.seed();
       });
