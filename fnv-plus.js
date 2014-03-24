@@ -126,7 +126,6 @@
       hash *= prime;
     }
 
-    //return new FnvHash(bn(hash).and(mask), 52);
     return new FnvHash(bn(hash).and(mask), 52);
   }
 
