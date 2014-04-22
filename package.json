@@ -2,7 +2,7 @@
   "name": "fnv-plus",
   "version": "1.2.3",
   "description": "Javascript FNV-1a Hashing Algorithm up to 1024 bits, with highly optimized 32bit and 52bit implementations.",
-  "main": "fnv-plus.js",
+  "main": "index.js",
   "dependencies": {
     "jsbn": "~0.0.0"
   },
@@ -19,17 +19,16 @@
   },
   "keywords": [
     "hash",
-    "hashing",
     "checksum",
     "fnv",
     "fnv1a",
     "signature",
     "uniqueness",
-    "sig",
-    "tuple space"
+    "tuple space",
+    "filter"
   ],
   "author": "Travis Webb",
-  "license": "BSD",
+  "license": "MIT",
   "readmeFilename": "README.md",
   "gitHead": "227465ef7340e0087901ad50643266896fa96021",
   "bugs": {
