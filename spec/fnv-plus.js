@@ -1,5 +1,5 @@
 /* jshint expr:true */
-var fnv = require('../fnv-plus'),
+var fnv = require('..'),
   assert = require('chai').assert;
 
 describe('fnv-plus', function () {
