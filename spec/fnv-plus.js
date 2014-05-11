@@ -3,6 +3,9 @@ var fnv = require('..'),
   assert = require('chai').assert;
 
 describe('fnv-plus', function () {
+  beforeEach(function () {
+    fnv.seed('https://github.com/tjwebb/fnv-plus');
+  });
   describe('sanity', function () {
     it('should make public api functions available', function () {
       assert.ok(fnv);
@@ -30,7 +33,17 @@ describe('fnv-plus', function () {
       }
     };
 
+  describe('#seed', function () {
+    it('seed(0) implies that hash(0) = 0', function () {
+      fnv.seed(0);
+      assert.equal(fnv.hash(0, 32).dec(), 0);
+    });
+  });
+
   describe('#hash', function () {
+    beforeEach(function () {
+      fnv.seed('https://github.com/tjwebb/fnv-plus');
+    });
     var K = 1024,
         M = K * K,
       generate = function () {
@@ -91,10 +104,44 @@ describe('fnv-plus', function () {
       it('generated '+ (generations[g] / K).toFixed(0) +'k of test data');
     }
 
-    describe('()', function () {
-      beforeEach(function() {
-        fnv.seed();
+    /**
+     * http://tools.ietf.org/html/draft-eastlake-fnv-07#appendix-C
+     */
+    describe('draft-eastlake Appendix C examples', function () {
+      beforeEach(function () {
+        fnv.seed('chongo <Landon Curt Noll> /\\../\\');
       });
+      describe('without null termination', function () {
+        it('example 1', function () {
+          assert.equal(fnv.hash('', 32).hex(), '811c9dc5');
+          assert.equal(fnv.hash('', 64).hex(), 'cbf29ce484222325');
+        });
+        it('example 2', function () {
+          assert.equal(fnv.hash('a', 32).hex(), 'e40c292c');
+          assert.equal(fnv.hash('a', 64).hex(), 'af63dc4c8601ec8c');
+        });
+        it('example 3', function () {
+          assert.equal(fnv.hash('foobar', 32).hex(), 'bf9cf968');
+          assert.equal(fnv.hash('foobar', 64).hex(), '85944171f73967e8');
+        });
+      });
+      describe('with null termination', function () {
+        it('example 1', function () {
+          assert.equal(fnv.hash('\0', 32).hex(), '050c5d1f');
+          assert.equal(fnv.hash('\0', 64).hex(), 'af63bd4c8601b7df');
+        });
+        it('example 2', function () {
+          assert.equal(fnv.hash('a\0', 32).hex(), '2b24d044');
+          assert.equal(fnv.hash('a\0', 64).hex(), '089be207b544f1e4');
+        });
+        it('example 3', function () {
+          assert.equal(fnv.hash('foobar\0', 32).hex(), '0c1c9eb8');
+          assert.equal(fnv.hash('foobar\0', 64).hex(), '34531ca7168b8f38');
+        });
+      });
+    });
+
+    describe('()', function () {
       it('should generate a 52-bit hash by default', function () {
         var h1 = fnv.hash(hash1),
             h2 = fnv.hash(hash2),
@@ -133,17 +180,12 @@ describe('fnv-plus', function () {
           actual = t2 - t1;
           max = performant(g, 52);
 
-          //console.log('52bit actual: '+ actual);
-
           assert(actual < max, 'actual time in ms: '+ actual +' ; max allowed: '+ max);
         }
       });
     });
 
     describe('(32)', function () {
-      beforeEach(function () {
-        fnv.seed();
-      });
       it('should generate a 32-bit hash if specified', function () {
         var h1 = fnv.hash(hash1, 32),
             h2 = fnv.hash(hash2, 32),
@@ -188,9 +230,6 @@ describe('fnv-plus', function () {
     });
 
     describe('(64)', function () {
-      beforeEach(function () {
-        fnv.seed();
-      });
       it('should generate a 64-bit hash if specified', function () {
         var h1 = fnv.hash(hash1, 64),
             h2 = fnv.hash(hash2, 64),
@@ -222,17 +261,12 @@ describe('fnv-plus', function () {
           actual = t2 - t1;
           max = performant(g, 64);
 
-          //console.log('64bit actual: '+ actual);
-
           assert(actual < max, 'actual time in ms: '+ actual +' ; max allowed: '+ max);
         }
       });
     });
 
     describe('(128)', function () {
-      beforeEach(function() {
-        fnv.seed();
-      });
       it('should generate a 128-bit hash', function () {
         var h1 = fnv.hash(hash1, 128), 
             h2 = fnv.hash(hash2, 128),
@@ -264,16 +298,11 @@ describe('fnv-plus', function () {
           actual = t2 - t1;
           max = performant(g, 128);
 
-          //console.log('128bit actual: '+ actual);
-
           assert(actual < max, 'actual time in ms: '+ actual +' ; max allowed: '+ max);
         }
       });
     });
     describe('(256)', function () {
-      beforeEach(function() {
-        fnv.seed();
-      });
       it('should generate a 256-bit hash', function () {
         var h1 = fnv.hash(hash1, 256),
             h2 = fnv.hash(hash2, 256),
@@ -305,16 +334,11 @@ describe('fnv-plus', function () {
           actual = t2 - t1;
           max = performant(g, 256);
 
-          //console.log('256bit actual: '+ actual);
-
           assert(actual < max, 'actual time in ms: '+ actual +' ; max allowed: '+ max);
         }
       });
     });
     describe('(512)', function () {
-      beforeEach(function() {
-        fnv.seed();
-      });
       it('should generate a 512-bit hash if specified', function () {
         var h1 = fnv.hash(hash1, 512),
             h2 = fnv.hash(hash2, 512),
@@ -346,16 +370,11 @@ describe('fnv-plus', function () {
           actual = t2 - t1;
           max = performant(g, 512);
 
-          //console.log('512bit actual: '+ actual);
-
           assert(actual < max, 'actual time in ms: '+ actual +' ; max allowed: '+ max);
         }
       });
     });
     describe('(1024)', function () {
-      beforeEach(function() {
-        fnv.seed();
-      });
       it('should generate a 1024-bit hash if specified', function () {
         var h1 = fnv.hash(hash1, 1024),
             h2 = fnv.hash(hash2, 1024),
@@ -390,8 +409,6 @@ describe('fnv-plus', function () {
           actual = t2 - t1;
           max = performant(g, 1024);
 
-          //console.log('1024 actual: '+ actual);
-
           assert(actual < max, 'actual time in ms: '+ actual +' ; max allowed: '+ max);
         }
       });
@@ -399,9 +416,6 @@ describe('fnv-plus', function () {
   });
   describe('FnvHash', function () {
     var h1, h2;
-    beforeEach(function() {
-      fnv.seed();
-    });
 
     before(function () {
       h1 = fnv.hash(hash1),

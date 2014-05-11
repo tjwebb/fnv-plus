@@ -6,10 +6,10 @@
 var fnvplus = exports;
 
 var BigInteger = require('jsbn'),
-  default_seed = 'https://github.com/tjwebb/fnv-plus';
-
-var default_keyspace = 52,
-  fnv_constants = {
+  version = '1a',
+  referenceSeed = 'chongo <Landon Curt Noll> /\\../\\',
+  defaultKeyspace = 52,
+  fnvConstants = {
     32: {
       prime:  Math.pow(2, 24) + Math.pow(2, 8) + 0x93,
       offset: 0,
@@ -23,27 +23,27 @@ var default_keyspace = 52,
     },
     64: {
       prime:  bn(2).pow(bn(40)).add(bn(2).pow(bn(8))).add(bn('b3', 16)),
-      offset: bn(0, 10),
+      offset: 0,
       mask:   bn('FFFFFFFFFFFFFFFF', 16)
     },
     128: {
       prime:  bn(2).pow(bn(88)).add(bn(2).pow(bn(8))).add(bn('3b', 16)),
-      offset: bn(0, 10),
+      offset: 0,
       mask:   bn('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', 16)
     },
     256: {
       prime:  bn(2).pow(bn(168)).add(bn(2).pow(bn(8))).add(bn('63', 16)),
-      offset: bn(0, 10),
+      offset: 0,
       mask:   bn('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', 16)
     },
     512: {
       prime:  bn(2).pow(bn(344)).add(bn(2).pow(bn(8))).add(bn('57', 16)),
-      offset: bn(0, 10),
+      offset: 0,
       mask:   bn('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', 16)
     },
     1024: {
       prime:  bn(2).pow(bn(680)).add(bn(2).pow(bn(8))).add(bn('8d', 16)),
-      offset: bn(0, 10),
+      offset: 0,
       mask:   bn('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', 16)
     }
   };
@@ -78,16 +78,24 @@ function hexpad (value, keyspace) {
   return pad + str;
 }
 
-function hashGeneric (str, _keyspace) {
-  var keyspace = (_keyspace || default_keyspace),
-    prime = fnv_constants[keyspace].prime,
-    hash = fnv_constants[keyspace].offset,
-    mask = fnv_constants[keyspace].mask;
+function hashGeneric (str, keyspace) {
+  keyspace = (keyspace || defaultKeyspace);
+
+  var prime = fnvConstants[keyspace].prime,
+    hash = fnvConstants[keyspace].offset,
+    mask = fnvConstants[keyspace].mask;
 
   for (var i = 0; i < str.length; i++) {
-    hash = hash.xor(bn(str.charCodeAt(i)))
-                .multiply(prime)
-                .and(mask);
+    if (version === '1a') {
+      hash = hash.xor(bn(str.charCodeAt(i)))
+                 .multiply(prime)
+                 .and(mask);
+    }
+    else if (version === '1') {
+      hash = hash.multiply(prime)
+                 .xor(bn(str.charCodeAt(i)))
+                 .and(mask);
+    }
   }
   return new FnvHash(hash, keyspace);
 }
@@ -98,12 +106,17 @@ function hashGeneric (str, _keyspace) {
  * prime multiplication strategy.
  */
 function hash32 (str) {
-  var prime = fnv_constants[32].prime,
-    hash = fnv_constants[32].offset;
+  var hash = fnvConstants[32].offset;
 
   for (var i = 0; i < str.length; i++) {
-    hash ^= str.charCodeAt(i);
-    hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+    if (version === '1a') {
+      hash ^= str.charCodeAt(i);
+      hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+    }
+    else if (version === '1') {
+      hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+      hash ^= str.charCodeAt(i);
+    }
   }
   return new FnvHash(hash >>> 0, 32);
 }
@@ -114,13 +127,19 @@ function hash32 (str) {
  * advantage of hardware integer ops.
  */
 function hash52 (str) {
-  var prime = fnv_constants[52].prime,
-    hash = fnv_constants[52].offset,
-    mask = fnv_constants[52].mask;
+  var prime = fnvConstants[52].prime,
+    hash = fnvConstants[52].offset,
+    mask = fnvConstants[52].mask;
 
   for (var i = 0; i < str.length; i++) {
-    hash ^= Math.pow(str.charCodeAt(i), 2);
-    hash *= prime;
+    if (version === '1a') {
+      hash ^= Math.pow(str.charCodeAt(i), 2);
+      hash *= prime;
+    }
+    else if (version === '1') {
+      hash *= prime;
+      hash ^= Math.pow(str.charCodeAt(i), 2);
+    }
   }
 
   return new FnvHash(bn(hash).and(mask), 52);
@@ -131,17 +150,17 @@ function hash52 (str) {
  * @param message the value to hash
  * @public
  */
-fnvplus.hash = function (message, _keyspace) {
+fnvplus.hash = function (message, keyspace) {
   var str = (typeof message === 'object') ? JSON.stringify(message) : message;
 
-  if ((_keyspace || default_keyspace) === 32) {
+  if ((keyspace || defaultKeyspace) === 32) {
     return hash32(str);
   }
-  else if ((_keyspace || default_keyspace) === 52) {
+  else if ((keyspace || defaultKeyspace) === 52) {
     return hash52(str);
   }
   else {
-    return hashGeneric(str, _keyspace);
+    return hashGeneric(str, keyspace);
   }
 };
 
@@ -149,7 +168,7 @@ fnvplus.hash = function (message, _keyspace) {
  * @public
  */
 fnvplus.setKeyspace = function (keyspace) {
-  default_keyspace = keyspace;
+  defaultKeyspace = keyspace;
 };
 
 /**
@@ -158,12 +177,34 @@ fnvplus.setKeyspace = function (keyspace) {
  * @public
  */
 fnvplus.seed = function (seed) {
-  for (var keysize in fnv_constants) {
-    fnv_constants[keysize].offset = keysize >= 64 ? bn(0, 10) : 0;
+  seed = (seed || seed === 0) ? seed : referenceSeed;
+  var oldVersion = version;
+  if (seed === referenceSeed) {
+    fnvplus.version('1');
+  }
 
-    var offset = fnvplus.hash(seed || default_seed, parseInt(keysize, 10)).dec();
-    fnv_constants[keysize].offset = keysize >= 64 ? bn(offset, 10) : offset;
+  for (var keysize in fnvConstants) {
+    fnvConstants[keysize].offset = keysize >= 64 ? bn(0, 10) : 0;
+
+    var offset = fnvplus.hash(seed, parseInt(keysize, 10)).dec();
+    fnvConstants[keysize].offset = keysize >= 64 ? bn(offset, 10) : offset;
+  }
+  fnvplus.version(oldVersion);
+};
+
+/**
+ * Set the version to use when hashing. Can be either 1 or 1a.
+ * @default 1a
+ */
+fnvplus.version = function (_version) {
+  if (_version === '1a' || _version === '1') {
+    version = _version;
+  }
+  else {
+    throw new Error('Supported FNV versions: 1, 1a');
   }
 };
 
+fnvplus.version('1');
 fnvplus.seed();
+fnvplus.version('1a');
