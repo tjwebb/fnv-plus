@@ -1,11 +1,13 @@
 fnv-plus
 ========
 
-[![Build Status](https://travis-ci.org/tjwebb/fnv-plus.png?branch=master)](https://travis-ci.org/tjwebb/fnv-plus)
+[![NPM version][npm-image]][npm-url]
+[![Build status][travis-image]][travis-url]
+[![Dependency Status][daviddm-image]][daviddm-url]
 
 Javascript FNV-1a Hashing Algorithm up to 1024 bits, with highly optimized 32bit and 52bit implementations.
 
-## 0. Concept
+## Concept
 The FNV-1a hash algorithm, often simply called "fnv", disperses hashes
 throughout the n-bit hash space with very good dispersion and is very 
 fast.
@@ -29,7 +31,12 @@ thing for any reason. It is designed for *uniqueness*, not *randomness*.
 - the `hash()` function can now take arbitrary Javascript objects as input.
 - changed default bitlength to **52**
 
-## 1. Usage
+## Install
+```sh
+$ npm install fnv-plus --save
+```
+
+## Usage
 
     var fnv = require('fnv-plus'),
       astring = 'hello world',
@@ -48,14 +55,13 @@ thing for any reason. It is designed for *uniqueness*, not *randomness*.
     assert.notEqual(fnv.hash(astring), ahash64);
     // ^^ because the default seed is not 'foobar testseed'
 
-## 2. API
+## API
 
-- method `fnv.hash(string, bitlength)`
+#### `fnv.hash(string, bitlength)`
   - Hash a string using the given bit length (52 is default)
   - returns a `FnvHash` object
 
-
-- method `fnv.seed(string)`
+#### `fnv.seed(string)`
   - Seed the algorithm to produce different values. Hashing the same value with
     different seeds will very likely result in different results. To the extent
     your seed can be random, it can serve as a source of randomness, but
@@ -63,15 +69,21 @@ thing for any reason. It is designed for *uniqueness*, not *randomness*.
     generator).
   - default seed is the URL of this repository
 
+#### `FnvHash.str()`
+Returns the hashed value as an ascii string
 
-- object `FnvHash`
-  - `str()`
-      - Returns the hashed value as an ascii string
-  - `hex()`
-      - Returns the hashed value as a hexadecimal string
-  - `dec()`
-      - Returns the hashed value as a decimal string
+#### `FnvHash.hex()`
+Returns the hashed value as a hexadecimal string
 
-## 3. Contribute!
-- File a bug or feature request: https://github.com/tjwebb/fnv-plus/issues
-- I `<3` pull requests
+#### `FnvHash.dec()`
+Returns the hashed value as a decimal string
+
+## License
+MIT
+
+[npm-image]: https://img.shields.io/npm/v/fnv-plus.svg?style=flat
+[npm-url]: https://npmjs.org/package/fnv-plus
+[travis-image]: https://img.shields.io/travis/tjwebb/fnv-plus.svg?style=flat
+[travis-url]: https://travis-ci.org/tjwebb/fnv-plus
+[daviddm-image]: http://img.shields.io/david/tjwebb/fnv-plux.svg?style=flat
+[daviddm-url]: https://david-dm.org/tjwebb/fnv-plus
