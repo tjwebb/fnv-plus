@@ -84,5 +84,5 @@ MIT
 [npm-url]: https://npmjs.org/package/fnv-plus
 [travis-image]: https://img.shields.io/travis/tjwebb/fnv-plus.svg?style=flat-square
 [travis-url]: https://travis-ci.org/tjwebb/fnv-plus
-[daviddm-image]: http://img.shields.io/david/tjwebb/fnv-plux.svg?style=flat-square
+[daviddm-image]: http://img.shields.io/david/tjwebb/fnv-plus.svg?style=flat-square
 [daviddm-url]: https://david-dm.org/tjwebb/fnv-plus

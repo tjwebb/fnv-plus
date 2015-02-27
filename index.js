@@ -17,7 +17,7 @@ var fnvConstants = {
   52: {
     // the 52-bit FNV prime happens to be the same as the 64-bit prime,
     // since it only uses 40 bits.
-    prime:  parseInt(bn(2).pow(bn(40)).add(bn(2).pow(bn(8))).add(bn('b3', 16)), 10),
+    prime:  bn(2).pow(bn(40)).add(bn(2).pow(bn(8))).add(bn('b3', 16)),
     offset: 0,
     mask:   bn('FFFFFFFFFFFFF', 16)
   },
