@@ -5,48 +5,48 @@
  */
 var fnvplus = exports;
 
-var BigInteger = require('jsbn'),
-  version = '1a',
-  referenceSeed = 'chongo <Landon Curt Noll> /\\../\\',
-  defaultKeyspace = 52,
-  fnvConstants = {
-    32: {
-      prime:  Math.pow(2, 24) + Math.pow(2, 8) + 0x93,
-      offset: 0,
-    },
-    52: {
-      // the 52-bit FNV prime happens to be the same as the 64-bit prime,
-      // since it only uses 40 bits.
-      prime:  parseInt(bn(2).pow(bn(40)).add(bn(2).pow(bn(8))).add(bn('b3', 16)), 10),
-      offset: 0,
-      mask:   bn('FFFFFFFFFFFFF', 16)
-    },
-    64: {
-      prime:  bn(2).pow(bn(40)).add(bn(2).pow(bn(8))).add(bn('b3', 16)),
-      offset: 0,
-      mask:   bn('FFFFFFFFFFFFFFFF', 16)
-    },
-    128: {
-      prime:  bn(2).pow(bn(88)).add(bn(2).pow(bn(8))).add(bn('3b', 16)),
-      offset: 0,
-      mask:   bn('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', 16)
-    },
-    256: {
-      prime:  bn(2).pow(bn(168)).add(bn(2).pow(bn(8))).add(bn('63', 16)),
-      offset: 0,
-      mask:   bn('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', 16)
-    },
-    512: {
-      prime:  bn(2).pow(bn(344)).add(bn(2).pow(bn(8))).add(bn('57', 16)),
-      offset: 0,
-      mask:   bn('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', 16)
-    },
-    1024: {
-      prime:  bn(2).pow(bn(680)).add(bn(2).pow(bn(8))).add(bn('8d', 16)),
-      offset: 0,
-      mask:   bn('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', 16)
-    }
-  };
+var BigInteger = require('jsbn');
+var version = '1a';
+var referenceSeed = 'chongo <Landon Curt Noll> /\\../\\';
+var defaultKeyspace = 52;
+var fnvConstants = {
+  32: {
+    prime:  Math.pow(2, 24) + Math.pow(2, 8) + 0x93,
+    offset: 0,
+  },
+  52: {
+    // the 52-bit FNV prime happens to be the same as the 64-bit prime,
+    // since it only uses 40 bits.
+    prime:  parseInt(bn(2).pow(bn(40)).add(bn(2).pow(bn(8))).add(bn('b3', 16)), 10),
+    offset: 0,
+    mask:   bn('FFFFFFFFFFFFF', 16)
+  },
+  64: {
+    prime:  bn(2).pow(bn(40)).add(bn(2).pow(bn(8))).add(bn('b3', 16)),
+    offset: 0,
+    mask:   bn('FFFFFFFFFFFFFFFF', 16)
+  },
+  128: {
+    prime:  bn(2).pow(bn(88)).add(bn(2).pow(bn(8))).add(bn('3b', 16)),
+    offset: 0,
+    mask:   bn('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', 16)
+  },
+  256: {
+    prime:  bn(2).pow(bn(168)).add(bn(2).pow(bn(8))).add(bn('63', 16)),
+    offset: 0,
+    mask:   bn('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', 16)
+  },
+  512: {
+    prime:  bn(2).pow(bn(344)).add(bn(2).pow(bn(8))).add(bn('57', 16)),
+    offset: 0,
+    mask:   bn('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', 16)
+  },
+  1024: {
+    prime:  bn(2).pow(bn(680)).add(bn(2).pow(bn(8))).add(bn('8d', 16)),
+    offset: 0,
+    mask:   bn('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', 16)
+  }
+};
 
 /**
   * @private

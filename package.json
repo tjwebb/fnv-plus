@@ -7,30 +7,33 @@
     "jsbn": "~0.0.0"
   },
   "devDependencies": {
-    "chai": "~1.8.1",
     "mocha": "~1.14.0"
   },
+  "bundledDependencies": [
+    "jsbn"
+  ],
   "scripts": {
-    "test": "mocha -R spec spec/"
+    "test": "mocha --reporter spec"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/tjwebb/fnv-plus"
   },
   "keywords": [
+    "id",
+    "unique",
     "hash",
     "checksum",
     "fnv",
     "fnv1a",
     "signature",
     "uniqueness",
-    "tuple space",
+    "bloom",
     "filter"
   ],
-  "author": "Travis Webb",
+  "author": "Travis Webb <me@traviswebb.com>",
   "license": "MIT",
   "readmeFilename": "README.md",
-  "gitHead": "227465ef7340e0087901ad50643266896fa96021",
   "bugs": {
     "url": "https://github.com/tjwebb/fnv-plus/issues"
   }

@@ -1,6 +1,6 @@
 /* jshint expr:true */
-var fnv = require('..'),
-  assert = require('chai').assert;
+var fnv = require('..');
+var assert = require('assert');
 
 describe('fnv-plus', function () {
   beforeEach(function () {
@@ -9,7 +9,6 @@ describe('fnv-plus', function () {
   describe('sanity', function () {
     it('should make public api functions available', function () {
       assert.ok(fnv);
-      assert.isFunction(fnv.hash);
     });
   });
 

@@ -26,8 +26,7 @@ thing for any reason. It is designed for *uniqueness*, not *randomness*.
   hash space while still making use of Javasript's 53-bit integer space.
 
 ##### New in 1.2.x
-- You can easily define custom seeds. Most other fnv implementations hardcode
-  the fnv offset.
+- You can easily define custom seeds.
 - the `hash()` function can now take arbitrary Javascript objects as input.
 - changed default bitlength to **52**
 
@@ -51,7 +50,7 @@ $ npm install fnv-plus --save
     assert.equal(ahash64.str(), '2kg3e4gji835o');
     assert.equal(ahash64.dec(), '12168039813402935292');
 
-    fnv.seed('fobar testseed');
+    fnv.seed('foobar testseed');
     assert.notEqual(fnv.hash(astring), ahash64);
     // ^^ because the default seed is not 'foobar testseed'
 
@@ -67,7 +66,7 @@ $ npm install fnv-plus --save
     your seed can be random, it can serve as a source of randomness, but
     nonetheless is *not* a replacement for a crypgographic PRG (pseudo-random
     generator).
-  - default seed is the URL of this repository
+  - default seed is `chongo <Landon Curt Noll> /\>./\\`
 
 #### `FnvHash.str()`
 Returns the hashed value as an ascii string
@@ -81,9 +80,9 @@ Returns the hashed value as a decimal string
 ## License
 MIT
 
-[npm-image]: https://img.shields.io/npm/v/fnv-plus.svg?style=flat
+[npm-image]: https://img.shields.io/npm/v/fnv-plus.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/fnv-plus
-[travis-image]: https://img.shields.io/travis/tjwebb/fnv-plus.svg?style=flat
+[travis-image]: https://img.shields.io/travis/tjwebb/fnv-plus.svg?style=flat-square
 [travis-url]: https://travis-ci.org/tjwebb/fnv-plus
-[daviddm-image]: http://img.shields.io/david/tjwebb/fnv-plux.svg?style=flat
+[daviddm-image]: http://img.shields.io/david/tjwebb/fnv-plux.svg?style=flat-square
 [daviddm-url]: https://david-dm.org/tjwebb/fnv-plus
