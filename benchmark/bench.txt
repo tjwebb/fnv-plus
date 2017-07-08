@@ -1,0 +1,142 @@
+
+RUNING BENCHMARKS ON SHORT STRING. (30 chars)
+==================================================
+
+Benchmarking: fnv_1a 32bit hashes as HEX (in ops/sec)
+    node-hashes   :  1,184,716   
+    fnv           :    638,208   
+    fnv32         :    968,621   
+    dding-fnv     :  1,767,775   
+    fnv1a         :  1,685,913   
+    fnv+ old      :  1,171,491   
+    fnv+ new      :  3,185,373   
+    fnv+ fast     :  4,483,889   
+---------------------------------
+Fastest is "fnv+ fast".
+
+Benchmarking: fnv_1a 32bit hashes as INT (in ops/sec)
+    node-hashes   :  1,895,542   
+    fnv           :    586,401   
+    fnv32         :  1,882,902   
+    dding-fnv     :  4,189,058   
+    fnv1a         :  3,250,275   
+    fnv+ old      :  2,082,656   
+    fnv+ new      :  4,129,318   
+    fnv+ fast     :  5,442,708   
+---------------------------------
+Fastest is "fnv+ fast".
+
+Benchmarking: fnv_1a 64bit hashes (in ops/sec)
+    dding-fnv     :        197   
+    fnv+ old      :     23,262   
+    fnv+ new      :  3,527,323   
+    fnv+ fast     :  4,057,430   
+    fnv+ old 52   :     11,174   
+    fnv+ new 52   :  4,912,016   
+    fnv+ fast 52  :  6,742,294   
+---------------------------------
+Fastest is "fnv+ fast 52".
+
+Benchmarking: fnv_1a 128bit hashes (in ops/sec)
+    md5 C         :    590,689   
+    YaMD5.js      :    734,352   
+    fnv-lite      :     35,279   
+    fnv+ old      :     21,968   
+    fnv+ new      :  2,297,952   
+---------------------------------
+Fastest is "fnv+ new".
+
+Benchmarking: fnv_1a 256+ bits hashes (in ops/sec)
+    sha256 C      :    511,820   
+    sha512 C      :    459,345   
+    fnv+ old 256  :     15,025   
+    fnv+ new 256  :  1,323,082   
+    fnv+ old 512  :      7,598   
+    fnv+ new 512  :    668,181   
+    fnv+ old 1024 :      3,330   
+    fnv+ new 1024 :    309,645   
+---------------------------------
+Fastest is "fnv+ new 256".
+
+Benchmarking: fnv+ 1a 52bit hash (in ops/sec)
+    hex convert   :  1,231,873      value: "9d30437a43ec0"
+    str convert   :  1,470,932      value: "r87omfbw74"
+    dec value     :  3,558,903      value: "2765289857236672"
+    fnv+ fast hex :  4,112,954      value: "9d30437a43ec0"
+    value.toString:  4,283,915      value: "2765289857236672"
+    direct value  :  4,950,540      value: 2765289857236672
+    fnv+ fast     :  6,693,666      value: 2765289857236672
+---------------------------------
+Fastest is "fnv+ fast".
+
+
+RUNING BENCHMARKS ON HUGE STRING. (1048576 chars)
+==================================================
+
+Benchmarking: fnv_1a 32bit hashes as HEX (in ops/sec)
+    node-hashes   :        202   
+    fnv           :         65.92
+    fnv32         :        109   
+    dding-fnv     :        129   
+    fnv1a         :        117   
+    fnv+ old      :         75.51
+    fnv+ new      :        159   
+    fnv+ fast     :        160   
+---------------------------------
+Fastest is "node-hashes".
+
+Benchmarking: fnv_1a 32bit hashes as INT (in ops/sec)
+    node-hashes   :        333   
+    fnv           :         66.18
+    fnv32         :        109   
+    dding-fnv     :        127   
+    fnv1a         :        121   
+    fnv+ old      :         78.24
+    fnv+ new      :        165   
+    fnv+ fast     :        164   
+---------------------------------
+Fastest is "node-hashes".
+
+Benchmarking: fnv_1a 64bit hashes (in ops/sec)
+    dding-fnv     : disabled due to very bad performance.
+    fnv+ old      :          0.79
+    fnv+ new      :        157   
+    fnv+ fast     :        150   
+    fnv+ old 52   :          0.33
+    fnv+ new 52   :        171   
+    fnv+ fast 52  :        172   
+---------------------------------
+Fastest is "fnv+ fast 52".
+
+Benchmarking: fnv_1a 128bit hashes (in ops/sec)
+    md5 C         :        413   
+    YaMD5.js      :         79.04
+    fnv-lite      :          1.15
+    fnv+ old      :          0.63
+    fnv+ new      :        113   
+---------------------------------
+Fastest is "md5 C".
+
+Benchmarking: fnv_1a 256+ bits hashes (in ops/sec)
+    sha256 C      :        260   
+    sha512 C      :        333   
+    fnv+ old 256  :          0.43
+    fnv+ new 256  :         61.17
+    fnv+ old 512  :          0.22
+    fnv+ new 512  :         27.75
+    fnv+ old 1024 :          0.10
+    fnv+ new 1024 :         12.64
+---------------------------------
+Fastest is "sha512 C".
+
+Benchmarking: fnv+ 1a 52bit hash (in ops/sec)
+    hex convert   :        171      value: "3aee09b142f4c"
+    str convert   :        172      value: "a7hbj4hn4c"
+    dec value     :        172      value: "1036704627830604"
+    fnv+ fast hex :        150      value: "3aee09b142f4c"
+    value.toString:        172      value: "1036704627830604"
+    direct value  :        172      value: 1036704627830604
+    fnv+ fast     :        172      value: 1036704627830604
+---------------------------------
+Fastest is "fnv+ fast".
+
