@@ -105,7 +105,7 @@ collisions, so why bother?
 But it was interesting to see how amount of collisions grow over time for this
 two functions:
 
-![collisions grow][cgrow.png]
+![collisions grow](cgrow.png)
 
 For 52 and 64 bit variants results are:
 
