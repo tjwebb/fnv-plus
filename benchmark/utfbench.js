@@ -391,7 +391,7 @@ function fnv1a_utf_52(str) {
 	return (a&15) * 281474976710656 + b * 4294967296 + c * 65536 + (d^(a>>4));
 }
 
-var test_str = 'hardardcwojgre12345!@#$%  TEST';//genStr(156000000);
+var test_str = 'harйцrdcwйцgrе12345!@#$%  TEST';
 console.log('\nRUNING BENCHMARKS ON SHORT STRING. ('+test_str.length+' chars)');
 console.log('==================================================\n');
 

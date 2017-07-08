@@ -2,20 +2,20 @@ RUNING BENCHMARKS ON SHORT STRING. (30 chars)
 ==================================================
 
 Benchmarking: fnv_1a 32bit hashes (in ops/sec)
-    bin version   :  5,644,902
-    UTF-8 version :  4,248,606
+    bin version   :  5,602,308
+    UTF-8 version :  3,768,404
 ---------------------------------
 Fastest is "bin version".
 
 Benchmarking: fnv_1a 52bit hashes (in ops/sec)
-    bin version   :  6,951,421
-    UTF-8 version :  4,209,660
+    bin version   :  6,408,070
+    UTF-8 version :  3,922,182
 ---------------------------------
 Fastest is "bin version".
 
 Benchmarking: fnv_1a 64bit hashes (in ops/sec)
-    bin version   :  4,334,124
-    UTF-8 version :  3,273,687
+    bin version   :  4,213,926
+    UTF-8 version :  2,945,491
 ---------------------------------
 Fastest is "bin version".
 
