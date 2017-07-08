@@ -1,3 +1,28 @@
+RUNING BENCHMARKS ON SHORT STRING. (30 chars)
+==================================================
+
+Benchmarking: fnv_1a 32bit hashes (in ops/sec)
+    bin version   :  5,644,902
+    UTF-8 version :  4,248,606
+---------------------------------
+Fastest is "bin version".
+
+Benchmarking: fnv_1a 52bit hashes (in ops/sec)
+    bin version   :  6,951,421
+    UTF-8 version :  4,209,660
+---------------------------------
+Fastest is "bin version".
+
+Benchmarking: fnv_1a 64bit hashes (in ops/sec)
+    bin version   :  4,334,124
+    UTF-8 version :  3,273,687
+---------------------------------
+Fastest is "bin version".
+
+
+RUNING COLLISIONS BENCHMARKS
+==================================================
+
 50 runs, 4000000 samples per run. Samples like: {value:"уюпьжя"}
 
 FNV-1a 32bit.
