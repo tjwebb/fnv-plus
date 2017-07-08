@@ -68,7 +68,7 @@ describe('fnv-plus', function () {
       ascii = { },
 
       /**
-      * Max allowable time in ms to hash 1kb of data with 32-bit fnv. Used to 
+      * Max allowable time in ms to hash 1kb of data with 32-bit fnv. Used to
       * compute derivative benchmarks for other payload sizes and bitlengths.
       */
       t = 2,
@@ -146,8 +146,8 @@ describe('fnv-plus', function () {
             h2 = fnv.hash(hash2),
             h3 = fnv.hash(generate());
 
-        assert.equal(h1.hex(), '70fdcd2665b80');
-        assert.equal(h2.hex(), '97153c7d081a0');
+        assert.equal(h1.hex(), 'a410bc777a59c');
+        assert.equal(h2.hex(), 'c6e1a37123b9d');
         assert.ok(h3.hex());
         assert.equal(h3.hex().length, 13);
       });
@@ -157,8 +157,8 @@ describe('fnv-plus', function () {
             h2 = fnv.hash(hash2),
             h3 = fnv.hash(generate());
 
-        assert.equal(h1.hex(), 'e7879cd771f43');
-        assert.equal(h2.hex(), '970bd9caf8740');
+        assert.equal(h1.hex(), '67d7054c515b7');
+        assert.equal(h2.hex(), '4b3a6d8f94de9');
         assert.ok(h3.hex());
         assert.equal(h3.hex().length, 13);
       });
@@ -166,8 +166,8 @@ describe('fnv-plus', function () {
         var h1 = fnv.hash(hashObject1),
           h2 = fnv.hash(hashObject2);
 
-        assert.equal(h1.hex(), 'f548fd1135663');
-        assert.equal(h2.hex(), '287c3f4348a8b');
+        assert.equal(h1.hex(), '454094ad09212');
+        assert.equal(h2.hex(), '9b41cd5627fb2');
       });
       it.skip('should be performant (52)', function () {
         for (var g = 0; g < generations.length; g++) {
@@ -267,7 +267,7 @@ describe('fnv-plus', function () {
 
     describe('(128)', function () {
       it('should generate a 128-bit hash', function () {
-        var h1 = fnv.hash(hash1, 128), 
+        var h1 = fnv.hash(hash1, 128),
             h2 = fnv.hash(hash2, 128),
             h3 = fnv.hash(generate(), 128);
 
@@ -426,22 +426,22 @@ describe('fnv-plus', function () {
 
     it('#str()', function () {
       var h1 = fnv.hash(hash1);
-      assert.equal(h1.str(), 'jklr2akuww');
-      assert.equal(h2.str(), 'q650yhjd0g');
+      assert.equal(h1.str(), 'sf3hhvkal8');
+      assert.equal(h2.str(), 'yg7fiat40t');
 
       assert.equal(h3.str(), 'hvs45jc5k7fa');
       assert.equal(h4.str(), '12rc4w0lr3yep');
     });
     it('#hex()', function () {
-      assert.equal(h1.hex(), '70fdcd2665b80');
-      assert.equal(h2.hex(), '97153c7d081a0');
+      assert.equal(h1.hex(), 'a410bc777a59c');
+      assert.equal(h2.hex(), 'c6e1a37123b9d');
 
       assert.equal(h3.hex(), '20aa410bc777a796');
       assert.equal(h4.hex(), '46cc6e1a37123ff1');
     });
     it('#dec()', function () {
-      assert.equal(h1.dec(), '1987765934119808');
-      assert.equal(h2.dec(), '2657879438950816');
+      assert.equal(h1.dec(), '2886268614059420');
+      assert.equal(h2.dec(), '3498758592674717');
 
       assert.equal(h3.dec(), '2353765274101458838');
       assert.equal(h4.dec(), '5101573536776077297');
