@@ -9,14 +9,14 @@ between optimized and `jsbn` based implementations. For full report see
 At the moment fnv-plus is fastest for 32bits
 
     Benchmarking: fnv_1a 32bit hashes as HEX (in ops/sec)
-        node-hashes   :  1,184,716
-        fnv           :    638,208
-        fnv32         :    968,621
-        dding-fnv     :  1,767,775
-        fnv1a         :  1,685,913
-        fnv+ old      :  1,171,491
-        fnv+ new      :  3,185,373
-        fnv+ fast     :  4,483,889
+        node-hashes   :  1,157,886
+        fnv           :    575,333
+        fnv32         :    877,245
+        dding-fnv     :  1,775,033
+        fnv1a         :  1,699,150
+        fnv+ old      :  1,160,241
+        fnv+ new      :  3,234,274
+        fnv+ fast     :  4,513,486
     ---------------------------------
     Fastest is "fnv+ fast".
 
@@ -25,13 +25,13 @@ Note: `node-hashes` is native module written in C.
 And for 64bit (but `dding-fnv` is the one other module supporting 64bit though...)
 
     Benchmarking: fnv_1a 64bit hashes (in ops/sec)
-        dding-fnv     :        197
-        fnv+ old      :     23,262
-        fnv+ new      :  3,527,323
-        fnv+ fast     :  4,057,430
-        fnv+ old 52   :     11,174
-        fnv+ new 52   :  4,912,016
-        fnv+ fast 52  :  6,742,294
+        dding-fnv     :        194
+        fnv+ old      :     24,876
+        fnv+ new      :  3,984,470
+        fnv+ fast     :  5,364,450
+        fnv+ old 52   :     11,725
+        fnv+ new 52   :  5,320,931
+        fnv+ fast 52  :  8,092,374
     ---------------------------------
     Fastest is "fnv+ fast 52".
 
@@ -47,13 +47,13 @@ Nice API, useful options, checks for valid input - all this add to run costs.
 Here you can see how it affects 52bit variant of hash.
 
     Benchmarking: fnv+ 1a 52bit hash (in ops/sec)
-        hex convert   :  1,231,873      value: "9d30437a43ec0"
-        str convert   :  1,470,932      value: "r87omfbw74"
-        dec value     :  3,558,903      value: "2765289857236672"
-        fnv+ fast hex :  4,112,954      value: "9d30437a43ec0"
-        value.toString:  4,283,915      value: "2765289857236672"
-        direct value  :  4,950,540      value: 2765289857236672
-        fnv+ fast     :  6,693,666      value: 2765289857236672
+        hex convert   :  1,240,115      value: "9d30437a43ec0"
+        str convert   :  1,507,729      value: "r87omfbw74"
+        dec value     :  3,867,264      value: "2765289857236672"
+        value.toString:  4,642,657      value: "2765289857236672"
+        direct value  :  5,436,712      value: 2765289857236672
+        fnv+ fast hex :  5,490,929      value: "9d30437a43ec0"
+        fnv+ fast     :  8,078,344      value: 2765289857236672
     ---------------------------------
     Fastest is "fnv+ fast".
 
@@ -70,14 +70,14 @@ But if you want to hash really big strings, then *lib-overhead* does not
 matter much. And native modules are fastest one.
 
     Benchmarking: fnv_1a 32bit hashes as INT (in ops/sec)
-        node-hashes   :        333
-        fnv           :         66.18
-        fnv32         :        109
-        dding-fnv     :        127
+        node-hashes   :        338
+        fnv           :         66.06
+        fnv32         :        110
+        dding-fnv     :        129
         fnv1a         :        121
-        fnv+ old      :         78.24
+        fnv+ old      :         78.93
         fnv+ new      :        165
-        fnv+ fast     :        164
+        fnv+ fast     :        165
     ---------------------------------
     Fastest is "node-hashes".
 
