@@ -72,6 +72,10 @@ $ npm install fnv-plus --save
     generator).
   - default seed is `chongo <Landon Curt Noll> /\>./\\`
 
+#### `fnv.useUTF8(bool)`
+  - Controls UTF-8 awareness of hash functions
+  - default is `false`
+
 #### `FnvHash.str()`
 Returns the hashed value as an ascii string
 
@@ -107,6 +111,32 @@ version of hashes and always use default seed. Directly returns hash values
 #### `fnv.fast1a64(string)`
   - Calculate FNV-1a 64bit hash
   - returns hex string
+
+#### `fnv.fast1a32utf(string)`
+  - Calculate FNV-1a 32bit hash
+  - handles UTF-8 strings
+  - returns int
+
+#### `fnv.fast1a32hexutf(string)`
+  - Calculate FNV-1a 32bit hash
+  - handles UTF-8 strings
+  - returns hex string
+
+#### `fnv.fast1a52utf(string)`
+  - Calculate FNV-1a 52bit hash
+  - handles UTF-8 strings
+  - returns int
+
+#### `fnv.fast1a52hexutf(string)`
+  - Calculate FNV-1a 52bit hash
+  - handles UTF-8 strings
+  - returns hex string
+
+#### `fnv.fast1a64utf(string)`
+  - Calculate FNV-1a 64bit hash
+  - handles UTF-8 strings
+  - returns hex string
+
 
 ## License
 MIT
