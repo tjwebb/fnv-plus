@@ -8,15 +8,16 @@ between optimized and `jsbn` based implementations. For full report see
 
 At the moment fnv-plus is fastest for 32bits
 
-    Benchmarking: fnv_1a 32bit hashes as HEX (in ops/sec)
-        node-hashes   :  1,157,886
-        fnv           :    575,333
-        fnv32         :    877,245
-        dding-fnv     :  1,775,033
-        fnv1a         :  1,699,150
-        fnv+ old      :  1,160,241
-        fnv+ new      :  3,234,274
-        fnv+ fast     :  4,513,486
+    Benchmarking: fnv_1a 32bit hashes as INT (in ops/sec)
+        crc32         :  7,585,538
+        node-hashes   :  1,973,088
+        fnv           :    553,800
+        fnv32         :  1,754,290
+        dding-fnv     :  4,289,330
+        fnv1a         :  3,312,211
+        fnv+ old      :  2,187,938
+        fnv+ new      :  6,868,300
+        fnv+ fast     : 10,416,654
     ---------------------------------
     Fastest is "fnv+ fast".
 
@@ -25,13 +26,13 @@ Note: `node-hashes` is native module written in C.
 And for 64bit (but `dding-fnv` is the one other module supporting 64bit though...)
 
     Benchmarking: fnv_1a 64bit hashes (in ops/sec)
-        dding-fnv     :        194
-        fnv+ old      :     24,876
-        fnv+ new      :  3,984,470
-        fnv+ fast     :  5,364,450
-        fnv+ old 52   :     11,725
-        fnv+ new 52   :  5,320,931
-        fnv+ fast 52  :  8,092,374
+        dding-fnv     :        199
+        fnv+ old      :     24,842
+        fnv+ new      :  4,072,485
+        fnv+ fast     :  5,461,176
+        fnv+ old 52   :     11,691
+        fnv+ new 52   :  5,521,316
+        fnv+ fast 52  :  8,311,094
     ---------------------------------
     Fastest is "fnv+ fast 52".
 
@@ -47,13 +48,13 @@ Nice API, useful options, checks for valid input - all this add to run costs.
 Here you can see how it affects 52bit variant of hash.
 
     Benchmarking: fnv+ 1a 52bit hash (in ops/sec)
-        hex convert   :  1,240,115      value: "9d30437a43ec0"
-        str convert   :  1,507,729      value: "r87omfbw74"
-        dec value     :  3,867,264      value: "2765289857236672"
-        value.toString:  4,642,657      value: "2765289857236672"
-        direct value  :  5,436,712      value: 2765289857236672
-        fnv+ fast hex :  5,490,929      value: "9d30437a43ec0"
-        fnv+ fast     :  8,078,344      value: 2765289857236672
+        hex convert   :  1,243,310      value: "9d30437a43ec0"
+        str convert   :  1,550,846      value: "r87omfbw74"
+        dec value     :  4,017,340      value: "2765289857236672"
+        value.toString:  4,811,368      value: "2765289857236672"
+        direct value  :  5,660,775      value: 2765289857236672
+        fnv+ fast hex :  5,591,846      value: "9d30437a43ec0"
+        fnv+ fast     :  8,266,190      value: 2765289857236672
     ---------------------------------
     Fastest is "fnv+ fast".
 
@@ -70,14 +71,15 @@ But if you want to hash really big strings, then *lib-overhead* does not
 matter much. And native modules are fastest one.
 
     Benchmarking: fnv_1a 32bit hashes as INT (in ops/sec)
-        node-hashes   :        338
-        fnv           :         66.06
+        crc32         :        205
+        node-hashes   :        329
+        fnv           :         66.88
         fnv32         :        110
-        dding-fnv     :        129
-        fnv1a         :        121
-        fnv+ old      :         78.93
-        fnv+ new      :        165
-        fnv+ fast     :        165
+        dding-fnv     :        130
+        fnv1a         :        123
+        fnv+ old      :         79.37
+        fnv+ new      :        248
+        fnv+ fast     :        240
     ---------------------------------
     Fastest is "node-hashes".
 
@@ -106,6 +108,11 @@ But it was interesting to see how amount of collisions grow over time for this
 two functions:
 
 ![collisions grow](cgrow.png)
+
+And look at CRC32:
+
+ - binary CRC32 had 149,537 collisions (0.075%)
+ - UTF-8 CRC32 had 13,319 collisions (0.007%)
 
 For 52 and 64 bit variants results are:
 

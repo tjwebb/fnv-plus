@@ -1,20 +1,9 @@
 var started = Date.now(),
-	microtime = require('microtime'),
+	crc32 = require('./crc32.js'),
 	crypto = require ('crypto');
 
 var i, hexes256 = [], hexes16 = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'];
 for (i = 0; i < 256; i++) {hexes256[i] = hexes16[(i>>4)&15] + hexes16[i&15];}
-
-function fnum(x) {
-	var t;
-	if(x<100){
-		t = ('          '+x.toFixed(2)).substr(-13);
-	}else{
-		t = Math.round(x).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-		if(t.length < 10) t = ('          '+t).substr(-10)+'   ';
-	}
-    return t;
-}
 
 function hexToBase(hex, base){
 	base = 33;
@@ -391,138 +380,26 @@ function fnv1a_utf_52(str) {
 	return (a&15) * 281474976710656 + b * 4294967296 + c * 65536 + (d^(a>>4));
 }
 
-var test_str = 'harйцrdcwйцgrе12345!@#$%  TEST';
-console.log('\nRUNING BENCHMARKS ON SHORT STRING. ('+test_str.length+' chars)');
-console.log('==================================================\n');
-
-var fc = 0, fn = 'null', mt, mts, cnt, t, runSecs = 5;
-console.log('Benchmarking: fnv_1a 32bit hashes (in ops/sec)');
-
-mts=0;cnt=0;
-while (mts < runSecs * 1e6) {
-	mt = microtime.now();
-	t = fnv1a_32(test_str);
-	t = fnv1a_32(test_str);
-	t = fnv1a_32(test_str);
-	t = fnv1a_32(test_str);
-	t = fnv1a_32(test_str);
-	t = fnv1a_32(test_str);
-	t = fnv1a_32(test_str);
-	t = fnv1a_32(test_str);
-	t = fnv1a_32(test_str);
-	t = fnv1a_32(test_str);
-	mts += microtime.now() - mt;cnt++;
-}
-console.log('    bin version   : %s', fnum(cnt * 10000000/mts));
-if(fc <= cnt){fc = cnt; fn = 'bin version';}
-
-mts=0;cnt=0;
-while (mts < runSecs * 1e6) {
-	mt = microtime.now();
-	t = fnv1a_utf_32(test_str);
-	t = fnv1a_utf_32(test_str);
-	t = fnv1a_utf_32(test_str);
-	t = fnv1a_utf_32(test_str);
-	t = fnv1a_utf_32(test_str);
-	t = fnv1a_utf_32(test_str);
-	t = fnv1a_utf_32(test_str);
-	t = fnv1a_utf_32(test_str);
-	t = fnv1a_utf_32(test_str);
-	t = fnv1a_utf_32(test_str);
-	mts += microtime.now() - mt;cnt++;
-}
-console.log('    UTF-8 version : %s', fnum(cnt * 10000000/mts));
-if(fc <= cnt){fc = cnt; fn = 'UTF-8 version';}
-
-console.log('---------------------------------\nFastest is "%s".\n', fn);
-
-fc = 0, fn = 'null';
-console.log('Benchmarking: fnv_1a 52bit hashes (in ops/sec)');
-
-mts=0;cnt=0;
-while (mts < runSecs * 1e6) {
-	mt = microtime.now();
-	t = fnv1a_52(test_str);
-	t = fnv1a_52(test_str);
-	t = fnv1a_52(test_str);
-	t = fnv1a_52(test_str);
-	t = fnv1a_52(test_str);
-	t = fnv1a_52(test_str);
-	t = fnv1a_52(test_str);
-	t = fnv1a_52(test_str);
-	t = fnv1a_52(test_str);
-	t = fnv1a_52(test_str);
-	mts += microtime.now() - mt;cnt++;
-}
-console.log('    bin version   : %s', fnum(cnt * 10000000/mts));
-if(fc <= cnt){fc = cnt; fn = 'bin version';}
-
-mts=0;cnt=0;
-while (mts < runSecs * 1e6) {
-	mt = microtime.now();
-	t = fnv1a_utf_52(test_str);
-	t = fnv1a_utf_52(test_str);
-	t = fnv1a_utf_52(test_str);
-	t = fnv1a_utf_52(test_str);
-	t = fnv1a_utf_52(test_str);
-	t = fnv1a_utf_52(test_str);
-	t = fnv1a_utf_52(test_str);
-	t = fnv1a_utf_52(test_str);
-	t = fnv1a_utf_52(test_str);
-	t = fnv1a_utf_52(test_str);
-	mts += microtime.now() - mt;cnt++;
-}
-console.log('    UTF-8 version : %s', fnum(cnt * 10000000/mts));
-if(fc <= cnt){fc = cnt; fn = 'UTF-8 version';}
-
-console.log('---------------------------------\nFastest is "%s".\n', fn);
-
-fc = 0, fn = 'null';
-console.log('Benchmarking: fnv_1a 64bit hashes (in ops/sec)');
-
-mts=0;cnt=0;
-while (mts < runSecs * 1e6) {
-	mt = microtime.now();
-	t = fnv1a_64_hex(test_str);
-	t = fnv1a_64_hex(test_str);
-	t = fnv1a_64_hex(test_str);
-	t = fnv1a_64_hex(test_str);
-	t = fnv1a_64_hex(test_str);
-	t = fnv1a_64_hex(test_str);
-	t = fnv1a_64_hex(test_str);
-	t = fnv1a_64_hex(test_str);
-	t = fnv1a_64_hex(test_str);
-	t = fnv1a_64_hex(test_str);
-	mts += microtime.now() - mt;cnt++;
-}
-console.log('    bin version   : %s', fnum(cnt * 10000000/mts));
-if(fc <= cnt){fc = cnt; fn = 'bin version';}
-
-mts=0;cnt=0;
-while (mts < runSecs * 1e6) {
-	mt = microtime.now();
-	t = fnv1a_utf_64_hex(test_str);
-	t = fnv1a_utf_64_hex(test_str);
-	t = fnv1a_utf_64_hex(test_str);
-	t = fnv1a_utf_64_hex(test_str);
-	t = fnv1a_utf_64_hex(test_str);
-	t = fnv1a_utf_64_hex(test_str);
-	t = fnv1a_utf_64_hex(test_str);
-	t = fnv1a_utf_64_hex(test_str);
-	t = fnv1a_utf_64_hex(test_str);
-	t = fnv1a_utf_64_hex(test_str);
-	mts += microtime.now() - mt;cnt++;
-}
-console.log('    UTF-8 version : %s', fnum(cnt * 10000000/mts));
-if(fc <= cnt){fc = cnt; fn = 'UTF-8 version';}
-
-console.log('---------------------------------\nFastest is "%s".\n', fn);
-
 console.log('\nRUNING COLLISIONS BENCHMARKS');
 console.log('==================================================\n');
 
 var	bf = new BigBloom(), sample = 4e6, runs = 50, s, y;
 console.log('%d runs, %d samples per run. Samples like: %s', runs, sample, genStr(156000000));
+
+console.log('\nCRC32.');
+console.log('Testing bytestring version');
+s = 0; bf.reset();
+for (y = 0; y < runs; y++) {
+	s += collisionRate(crc32.str, y+1);
+}
+console.log('TOTAL: %d collisions (%s%)', s, (100*s/runs/sample).toFixed(3));
+
+console.log('\nTesting UTF-8 version');
+s = 0; bf.reset();
+for (y = 0; y < runs; y++) {
+	s += collisionRate(crc32.utf, y+1);
+}
+console.log('TOTAL: %d collisions (%s%)', s, (100*s/runs/sample).toFixed(3));
 
 console.log('\nFNV-1a 32bit.');
 console.log('Testing bytestring version');

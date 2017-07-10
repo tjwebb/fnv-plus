@@ -5,6 +5,7 @@ var microtime = require('microtime'),
 	FNV = require("fnv").FNV,
 	fnv_plus = require('../'),
 	fnv_old = require('./fnv_plus_old.js'),
+	crc32 = require('./crc32.js'),
 	fnv32 = require('fnv32'),
 	dding_fnv = require('dding-fnv'),
 	fnv1a = require('fnv1a'),
@@ -21,15 +22,31 @@ function fnum(x) {
     return t;
 }
 
-var mt, test_str = 'hardardcwojgre12345!@#$%  TEST', t;
-
-test_str = 'hardardcwojgre12345!)(><-=....  '.repeat(32768);
+var mt, test_str, t;
 
 var runSecs = 5;
 
 function run32Hex() {
 	var fc = 0, fn = 'null', mts, cnt, h;
 	console.log('Benchmarking: fnv_1a 32bit hashes as HEX (in ops/sec)');
+
+	mts=0;cnt=0;
+	while (mts < runSecs * 1e6) {
+		mt = microtime.now();
+		t = crc32.strHex(test_str);
+		t = crc32.strHex(test_str);
+		t = crc32.strHex(test_str);
+		t = crc32.strHex(test_str);
+		t = crc32.strHex(test_str);
+		t = crc32.strHex(test_str);
+		t = crc32.strHex(test_str);
+		t = crc32.strHex(test_str);
+		t = crc32.strHex(test_str);
+		t = crc32.strHex(test_str);
+		mts += microtime.now() - mt;cnt++;
+	}
+	console.log('    crc32         : %s', fnum(cnt * 10000000/mts));
+	if(fc <= cnt){fc = cnt; fn = 'crc32';}
 
 	mts=0;cnt=0;
 	while (mts < runSecs * 1e6) {
@@ -181,6 +198,24 @@ function run32Hex() {
 function run32Int() {
 	var fc = 0, fn = 'null', mts, cnt, h;
 	console.log('Benchmarking: fnv_1a 32bit hashes as INT (in ops/sec)');
+
+	mts=0;cnt=0;
+	while (mts < runSecs * 1e6) {
+		mt = microtime.now();
+		t = crc32.str(test_str);
+		t = crc32.str(test_str);
+		t = crc32.str(test_str);
+		t = crc32.str(test_str);
+		t = crc32.str(test_str);
+		t = crc32.str(test_str);
+		t = crc32.str(test_str);
+		t = crc32.str(test_str);
+		t = crc32.str(test_str);
+		t = crc32.str(test_str);
+		mts += microtime.now() - mt;cnt++;
+	}
+	console.log('    crc32         : %s', fnum(cnt * 10000000/mts));
+	if(fc <= cnt){fc = cnt; fn = 'crc32';}
 
 	mts=0;cnt=0;
 	while (mts < runSecs * 1e6) {
@@ -775,24 +810,6 @@ function runOverhead() {
 	mts=0;cnt=0;
 	while (mts < runSecs * 1e6) {
 		mt = microtime.now();
-		t = fnv_plus.fast1a52hex(test_str);
-		t = fnv_plus.fast1a52hex(test_str);
-		t = fnv_plus.fast1a52hex(test_str);
-		t = fnv_plus.fast1a52hex(test_str);
-		t = fnv_plus.fast1a52hex(test_str);
-		t = fnv_plus.fast1a52hex(test_str);
-		t = fnv_plus.fast1a52hex(test_str);
-		t = fnv_plus.fast1a52hex(test_str);
-		t = fnv_plus.fast1a52hex(test_str);
-		t = fnv_plus.fast1a52hex(test_str);
-		mts += microtime.now() - mt;cnt++;
-	}
-	console.log('    fnv+ fast hex : %s   value: %s', fnum(cnt * 10000000/mts),JSON.stringify(t));
-	if(fc <= cnt){fc = cnt; fn = 'fnv+ fast hex';}
-
-	mts=0;cnt=0;
-	while (mts < runSecs * 1e6) {
-		mt = microtime.now();
 		t = fnv_plus.hash(test_str,52).value.toString();
 		t = fnv_plus.hash(test_str,52).value.toString();
 		t = fnv_plus.hash(test_str,52).value.toString();
@@ -829,6 +846,24 @@ function runOverhead() {
 	mts=0;cnt=0;
 	while (mts < runSecs * 1e6) {
 		mt = microtime.now();
+		t = fnv_plus.fast1a52hex(test_str);
+		t = fnv_plus.fast1a52hex(test_str);
+		t = fnv_plus.fast1a52hex(test_str);
+		t = fnv_plus.fast1a52hex(test_str);
+		t = fnv_plus.fast1a52hex(test_str);
+		t = fnv_plus.fast1a52hex(test_str);
+		t = fnv_plus.fast1a52hex(test_str);
+		t = fnv_plus.fast1a52hex(test_str);
+		t = fnv_plus.fast1a52hex(test_str);
+		t = fnv_plus.fast1a52hex(test_str);
+		mts += microtime.now() - mt;cnt++;
+	}
+	console.log('    fnv+ fast hex : %s   value: %s', fnum(cnt * 10000000/mts),JSON.stringify(t));
+	if(fc <= cnt){fc = cnt; fn = 'fnv+ fast hex';}
+
+	mts=0;cnt=0;
+	while (mts < runSecs * 1e6) {
+		mt = microtime.now();
 		t = fnv_plus.fast1a52(test_str);
 		t = fnv_plus.fast1a52(test_str);
 		t = fnv_plus.fast1a52(test_str);
@@ -844,7 +879,84 @@ function runOverhead() {
 	console.log('    fnv+ fast     : %s   value: %s', fnum(cnt * 10000000/mts),JSON.stringify(t));
 	if(fc <= cnt){fc = cnt; fn = 'fnv+ fast';}
 
+	console.log('---------------------------------\nFastest is "%s".\n', fn);
+}
 
+function runUtf() {
+	var fc = 0, fn = 'null', mts, cnt;
+	console.log('Benchmarking: bytestring vs utf-8 (in ops/sec)');
+
+	mts=0;cnt=0;
+	while (mts < runSecs * 1e6) {
+		mt = microtime.now();
+		t = crc32.str(test_str);
+		t = crc32.str(test_str);
+		t = crc32.str(test_str);
+		t = crc32.str(test_str);
+		t = crc32.str(test_str);
+		t = crc32.str(test_str);
+		t = crc32.str(test_str);
+		t = crc32.str(test_str);
+		t = crc32.str(test_str);
+		t = crc32.str(test_str);
+		mts += microtime.now() - mt;cnt++;
+	}
+	console.log('    crc32 byte    : %s', fnum(cnt * 10000000/mts));
+	if(fc <= cnt){fc = cnt; fn = 'crc32 byte';}
+
+	mts=0;cnt=0;
+	while (mts < runSecs * 1e6) {
+		mt = microtime.now();
+		t = crc32.utf(test_str);
+		t = crc32.utf(test_str);
+		t = crc32.utf(test_str);
+		t = crc32.utf(test_str);
+		t = crc32.utf(test_str);
+		t = crc32.utf(test_str);
+		t = crc32.utf(test_str);
+		t = crc32.utf(test_str);
+		t = crc32.utf(test_str);
+		t = crc32.utf(test_str);
+		mts += microtime.now() - mt;cnt++;
+	}
+	console.log('    crc32 utf     : %s', fnum(cnt * 10000000/mts));
+	if(fc <= cnt){fc = cnt; fn = 'crc32 utf';}
+
+	mts=0;cnt=0;
+	while (mts < runSecs * 1e6) {
+		mt = microtime.now();
+		t = fnv_plus.fast1a32(test_str);
+		t = fnv_plus.fast1a32(test_str);
+		t = fnv_plus.fast1a32(test_str);
+		t = fnv_plus.fast1a32(test_str);
+		t = fnv_plus.fast1a32(test_str);
+		t = fnv_plus.fast1a32(test_str);
+		t = fnv_plus.fast1a32(test_str);
+		t = fnv_plus.fast1a32(test_str);
+		t = fnv_plus.fast1a32(test_str);
+		t = fnv_plus.fast1a32(test_str);
+		mts += microtime.now() - mt;cnt++;
+	}
+	console.log('    fnv+ byte     : %s', fnum(cnt * 10000000/mts));
+	if(fc <= cnt){fc = cnt; fn = 'fnv+ byte';}
+
+	mts=0;cnt=0;
+	while (mts < runSecs * 1e6) {
+		mt = microtime.now();
+		t = fnv_plus.fast1a32utf(test_str);
+		t = fnv_plus.fast1a32utf(test_str);
+		t = fnv_plus.fast1a32utf(test_str);
+		t = fnv_plus.fast1a32utf(test_str);
+		t = fnv_plus.fast1a32utf(test_str);
+		t = fnv_plus.fast1a32utf(test_str);
+		t = fnv_plus.fast1a32utf(test_str);
+		t = fnv_plus.fast1a32utf(test_str);
+		t = fnv_plus.fast1a32utf(test_str);
+		t = fnv_plus.fast1a32utf(test_str);
+		mts += microtime.now() - mt;cnt++;
+	}
+	console.log('    fnv+ utf      : %s', fnum(cnt * 10000000/mts));
+	if(fc <= cnt){fc = cnt; fn = 'fnv+ utf';}
 
 	console.log('---------------------------------\nFastest is "%s".\n', fn);
 }
@@ -853,19 +965,21 @@ test_str = 'Hardardcwojgre12345!@#$%  TESU';
 
 console.log('\nRUNING BENCHMARKS ON SHORT STRING. ('+test_str.length+' chars)');
 console.log('==================================================\n');
-run32Hex();
-run32Int();
-run64Hex();
-run128Hex();
-runBig();
-runOverhead();
+// run32Hex();
+// run32Int();
+// run64Hex();
+// run128Hex();
+// runBig();
+// runOverhead();
+runUtf();
 
 test_str = 'hardardcwojgre12345!)(><-=....  '.repeat(32768);
 console.log('\nRUNING BENCHMARKS ON HUGE STRING. ('+test_str.length+' chars)');
 console.log('==================================================\n');
-run32Hex();
-run32Int();
-run64Hex(true);
-run128Hex();
-runBig();
-runOverhead();
+// run32Hex();
+// run32Int();
+// run64Hex(true);
+// run128Hex();
+// runBig();
+// runOverhead();
+runUtf();

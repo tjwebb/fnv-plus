@@ -1,29 +1,115 @@
-RUNING BENCHMARKS ON SHORT STRING. (30 chars)
-==================================================
-
-Benchmarking: fnv_1a 32bit hashes (in ops/sec)
-    bin version   :  5,602,308
-    UTF-8 version :  3,768,404
----------------------------------
-Fastest is "bin version".
-
-Benchmarking: fnv_1a 52bit hashes (in ops/sec)
-    bin version   :  6,408,070
-    UTF-8 version :  3,922,182
----------------------------------
-Fastest is "bin version".
-
-Benchmarking: fnv_1a 64bit hashes (in ops/sec)
-    bin version   :  4,213,926
-    UTF-8 version :  2,945,491
----------------------------------
-Fastest is "bin version".
-
 
 RUNING COLLISIONS BENCHMARKS
 ==================================================
 
 50 runs, 4000000 samples per run. Samples like: {value:"уюпьжя"}
+
+CRC32.
+Testing bytestring version
+1: collisions: 0.000% (0/4000000)
+2: collisions: 0.000% (0/4000000)
+3: collisions: 0.000% (0/4000000)
+4: collisions: 0.000% (0/4000000)
+5: collisions: 0.000% (0/4000000)
+6: collisions: 0.000% (0/4000000)
+7: collisions: 0.000% (0/4000000)
+8: collisions: 0.000% (0/4000000)
+9: collisions: 0.000% (0/4000000)
+10: collisions: 0.000% (0/4000000)
+11: collisions: 0.000% (0/4000000)
+12: collisions: 0.000% (0/4000000)
+13: collisions: 0.000% (0/4000000)
+14: collisions: 0.000% (0/4000000)
+15: collisions: 0.000% (0/4000000)
+16: collisions: 0.000% (0/4000000)
+17: collisions: 0.000% (0/4000000)
+18: collisions: 0.000% (0/4000000)
+19: collisions: 0.000% (0/4000000)
+20: collisions: 0.000% (0/4000000)
+21: collisions: 0.000% (0/4000000)
+22: collisions: 0.000% (0/4000000)
+23: collisions: 0.000% (0/4000000)
+24: collisions: 0.000% (0/4000000)
+25: collisions: 0.000% (0/4000000)
+26: collisions: 0.000% (0/4000000)
+27: collisions: 0.000% (0/4000000)
+28: collisions: 0.102% (4096/4000000)
+29: collisions: 0.000% (0/4000000)
+30: collisions: 0.000% (16/4000000)
+31: collisions: 0.000% (0/4000000)
+32: collisions: 0.000% (0/4000000)
+33: collisions: 0.000% (16/4000000)
+34: collisions: 0.000% (0/4000000)
+35: collisions: 0.000% (0/4000000)
+36: collisions: 0.000% (0/4000000)
+37: collisions: 0.000% (0/4000000)
+38: collisions: 0.000% (0/4000000)
+39: collisions: 0.000% (0/4000000)
+40: collisions: 0.197% (7873/4000000)
+41: collisions: 0.344% (13760/4000000)
+42: collisions: 0.346% (13824/4000000)
+43: collisions: 0.344% (13760/4000000)
+44: collisions: 0.346% (13824/4000000)
+45: collisions: 0.347% (13888/4000000)
+46: collisions: 0.344% (13760/4000000)
+47: collisions: 0.346% (13824/4000000)
+48: collisions: 0.347% (13888/4000000)
+49: collisions: 0.342% (13694/4000000)
+50: collisions: 0.333% (13314/4000000)
+TOTAL: 149537 collisions (0.075%)
+
+Testing UTF-8 version
+1: collisions: 0.000% (0/4000000)
+2: collisions: 0.000% (0/4000000)
+3: collisions: 0.000% (0/4000000)
+4: collisions: 0.000% (0/4000000)
+5: collisions: 0.000% (0/4000000)
+6: collisions: 0.000% (0/4000000)
+7: collisions: 0.000% (0/4000000)
+8: collisions: 0.000% (0/4000000)
+9: collisions: 0.000% (0/4000000)
+10: collisions: 0.000% (0/4000000)
+11: collisions: 0.000% (0/4000000)
+12: collisions: 0.000% (0/4000000)
+13: collisions: 0.000% (0/4000000)
+14: collisions: 0.000% (0/4000000)
+15: collisions: 0.000% (0/4000000)
+16: collisions: 0.000% (0/4000000)
+17: collisions: 0.000% (0/4000000)
+18: collisions: 0.000% (0/4000000)
+19: collisions: 0.000% (0/4000000)
+20: collisions: 0.000% (0/4000000)
+21: collisions: 0.000% (0/4000000)
+22: collisions: 0.000% (0/4000000)
+23: collisions: 0.000% (0/4000000)
+24: collisions: 0.000% (0/4000000)
+25: collisions: 0.000% (0/4000000)
+26: collisions: 0.000% (0/4000000)
+27: collisions: 0.000% (0/4000000)
+28: collisions: 0.000% (0/4000000)
+29: collisions: 0.000% (0/4000000)
+30: collisions: 0.010% (384/4000000)
+31: collisions: 0.019% (768/4000000)
+32: collisions: 0.019% (768/4000000)
+33: collisions: 0.026% (1024/4000000)
+34: collisions: 0.019% (768/4000000)
+35: collisions: 0.026% (1024/4000000)
+36: collisions: 0.019% (768/4000000)
+37: collisions: 0.019% (769/4000000)
+38: collisions: 0.026% (1024/4000000)
+39: collisions: 0.019% (768/4000000)
+40: collisions: 0.003% (129/4000000)
+41: collisions: 0.000% (0/4000000)
+42: collisions: 0.000% (1/4000000)
+43: collisions: 0.000% (2/4000000)
+44: collisions: 0.000% (0/4000000)
+45: collisions: 0.000% (0/4000000)
+46: collisions: 0.026% (1024/4000000)
+47: collisions: 0.000% (1/4000000)
+48: collisions: 0.000% (1/4000000)
+49: collisions: 0.051% (2048/4000000)
+50: collisions: 0.051% (2048/4000000)
+TOTAL: 13319 collisions (0.007%)
 
 FNV-1a 32bit.
 Testing bytestring version
@@ -346,4 +432,4 @@ Testing UTF-8 version
 50: collisions: 0.000% (0/4000000)
 TOTAL: 4 collisions (0.000%)
 
-Runnin time: 150.7min
+Runnin time: 198.4min
