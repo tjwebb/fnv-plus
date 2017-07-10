@@ -36,9 +36,9 @@ And for 64bit (but `dding-fnv` is the one other module supporting 64bit though..
     ---------------------------------
     Fastest is "fnv+ fast 52".
 
-Here you can see also 52bit functions. And for some reason they are even
+Here you can see also 52bit functions. ~~And for some reason they are even
 faster thatn 32bit! I can't explain this. Looks like some fancy v8
-optimizations.
+optimizations.~~ (now i know what math get slower when you get more than 32 bits)
 
 Other bitsizes was only in `fnv-plus` and now they runs 100 times faster.
 
