@@ -3,15 +3,18 @@
   "version": "1.2.12",
   "description": "Javascript FNV-1a Hashing Algorithm up to 1024 bits, with highly optimized 32bit and 52bit implementations.",
   "main": "index.js",
-  "dependencies": {
-    "jsbn": "~0.0.0"
-  },
   "devDependencies": {
-    "mocha": "~1.14.0"
+    "dding-fnv": "^1.0.1",
+    "fnv": "^0.1.3",
+    "fnv-lite": "^1.2.0",
+    "fnv1a": "^1.0.1",
+    "fnv32": "0.0.1",
+    "jsbn": "^1.1.0",
+    "microtime": "^2.1.6",
+    "mocha": "~1.14.0",
+    "node-hashes": "^0.1.0",
+    "yamd5.js": "^1.0.0"
   },
-  "bundledDependencies": [
-    "jsbn"
-  ],
   "scripts": {
     "test": "mocha --reporter spec"
   },
