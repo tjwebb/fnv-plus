@@ -3,7 +3,6 @@ fnv-plus
 
 [![NPM version][npm-image]][npm-url]
 [![Build status][travis-image]][travis-url]
-[![Dependency Status][daviddm-image]][daviddm-url]
 
 Javascript FNV-1a Hashing Algorithm up to 1024 bits, with highly optimized 32bit and 52bit implementations.
 
@@ -18,12 +17,14 @@ a cryptographic pseudo-random generator, and should not be used to secure any
 thing for any reason. It is designed for *uniqueness*, not *randomness*.
 
 ##### Why **fnv-plus**?
-- I call this module `fnv-plus` because it is the only npm module that
-  is capable of generating fnv hashes for keyspaces larger than 32 bits.
-- `fnv-plus` is well-tested. Many other fnv implementations offer no unit tests
-  to prove they work and are performant.
-- `fnv-plus` implements a 52bit version of FNV-1a which provides a larger
-  hash space while still making use of Javasript's 53-bit integer space.
+- It is the **fastest** FNV implementation available for Node.js (thanks [desudesutalk](https://github.com/desudesutalk)). See [Benchmarks](https://github.com/tjwebb/fnv-plus/tree/master/benchmark).
+- It is the only npm module that is capable of generating fnv hashes for keyspaces larger than 32 bits.
+- `fnv-plus` is well-tested. Many other fnv implementations offer no unit tests to prove they work and are performant.
+- `fnv-plus` implements a 52bit version of FNV-1a which provides a larger hash space while still making use of Javascript's 53-bit integer space.
+
+##### New in 1.3.x
+- No dependencies!
+- [Fast Variants](https://github.com/tjwebb/fnv-plus#fast-variants) that optimize for speed.
 
 ##### New in 1.2.x
 - You can easily define custom seeds.
@@ -145,5 +146,3 @@ MIT
 [npm-url]: https://npmjs.org/package/fnv-plus
 [travis-image]: https://img.shields.io/travis/tjwebb/fnv-plus.svg?style=flat-square
 [travis-url]: https://travis-ci.org/tjwebb/fnv-plus
-[daviddm-image]: http://img.shields.io/david/tjwebb/fnv-plus.svg?style=flat-square
-[daviddm-url]: https://david-dm.org/tjwebb/fnv-plus
