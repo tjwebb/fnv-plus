@@ -71,7 +71,7 @@ $ npm install fnv-plus --save
     your seed can be random, it can serve as a source of randomness, but
     nonetheless is *not* a replacement for a crypgographic PRG (pseudo-random
     generator).
-  - default seed is `chongo <Landon Curt Noll> /\>./\\`
+  - default seed is `chongo <Landon Curt Noll> /\../\`
 
 #### `fnv.useUTF8(bool)`
   - Controls UTF-8 awareness of hash functions
