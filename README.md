@@ -38,27 +38,28 @@ $ npm install fnv-plus --save
 
 ## Usage
 
-    var fnv = require('fnv-plus'),
-        astring = 'hello world',
-        ahash52 = fnv.hash(astring),        // 52-bit hash by default
-        ahash64 = fnv.hash(astring, 64);    // 64-bit hash specified
+```js
+var fnv = require('fnv-plus'),
+    astring = 'hello world',
+    ahash52 = fnv.hash(astring),        // 52-bit hash by default
+    ahash64 = fnv.hash(astring, 64);    // 64-bit hash specified
 
-    console.log(ahash52.hex() == 'a65e7023cd59e');    //true
-    console.log(ahash52.str() == 'stglysbf6m');       //true
-    console.log(ahash52.dec() == '2926792616498590'); //true
+console.log(ahash52.hex() == 'a65e7023cd59e');    //true
+console.log(ahash52.str() == 'stglysbf6m');       //true
+console.log(ahash52.dec() == '2926792616498590'); //true
 
-    console.log(ahash64.hex() == '779a65e7023cd2e7');     //true
-    console.log(ahash64.str() == '1th7cxzlyc0dj');        //true
-    console.log(ahash64.dec() == '8618312879776256743');  //true
+console.log(ahash64.hex() == '779a65e7023cd2e7');     //true
+console.log(ahash64.str() == '1th7cxzlyc0dj');        //true
+console.log(ahash64.dec() == '8618312879776256743');  //true
 
-    // fast variants
-    console.log(fnv.fast1a32hex(astring) == 'd58b3fa7');      //true
-    console.log(fnv.fast1a52hex(astring) == 'a65e7023cd59e'); //true
+// fast variants
+console.log(fnv.fast1a32hex(astring) == 'd58b3fa7');      //true
+console.log(fnv.fast1a52hex(astring) == 'a65e7023cd59e'); //true
 
-    fnv.seed('foobar testseed');
-    console.log(fnv.hash(astring, 64).hex() == ahash64.hex()); // false
-    // ^^ because the default seed is not 'foobar testseed'
-
+fnv.seed('foobar testseed');
+console.log(fnv.hash(astring, 64).hex() == ahash64.hex()); // false
+// ^^ because the default seed is not 'foobar testseed'
+```
 ## API
 
 #### `fnv.hash(string, bitlength)`
